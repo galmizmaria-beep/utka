@@ -578,22 +578,6 @@
             }
         }
 
-        function editChoiceOption(id, index, value) {
-            const task = config.tasks.find(t => t.id === id);
-            if (task && task.options) {
-                task.options[index] = value;
-                syncPreviewConfigs();
-            }
-        }
-
-        function editOrderItems(id, value) {
-            const task = config.tasks.find(t => t.id === id);
-            if (task) {
-                task.items = value.split(',').map(item => item.trim());
-                syncPreviewConfigs();
-            }
-        }
-
         // Live editor synchronizer
         function updateConfig(key, value) {
             let parsed = value;
@@ -608,6 +592,22 @@
             if (key === 'duckSpeed') document.getElementById('duckSpeedVal').innerText = value;
 
             syncPreviewConfigs();
+        }
+
+        function editChoiceOption(id, index, value) {
+            const task = config.tasks.find(t => t.id === id);
+            if (task && task.options) {
+                task.options[index] = value;
+                syncPreviewConfigs();
+            }
+        }
+
+        function editOrderItems(id, value) {
+            const task = config.tasks.find(t => t.id === id);
+            if (task) {
+                task.items = value.split(',').map(item => item.trim());
+                syncPreviewConfigs();
+            }
         }
 
         // Load project from file
@@ -902,740 +902,728 @@
         }
     </script>
 
-    <!-- EMBED THE LIVE RUNTIME CONTROLLER AND GAME LOGIC -->
-    <script id="game-runtime">
-        // Shared JavaScript Core Engine injected both into Editor Preview and Genially export
-        const gameEngineJSCode = `
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
+    <!-- LIVE DYNAMIC RUNTIME GAME CONTROLLER -->
+    <script>
+        // Shared live runtime directly reading the shared 'config' object!
+        // This ensures the preview canvas immediately reads changes.
+        
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-            let score = 0;
-            let round = 1;
-            let lives = config.livesCount;
-            let currentTaskIndex = 0;
-            let ammo = 3;
-            let gameState = 'START'; 
-            let ducks = [];
-            let activeTask = null;
-            let timerInterval = null;
-            let timeLeft = 0;
-            let selectedOption = null;
-            let orderItems = [];
+        let score = 0;
+        let round = 1;
+        let lives = 3;
+        let currentTaskIndex = 0;
+        let ammo = 3;
+        let gameState = 'START'; 
+        let ducks = [];
+        let activeTask = null;
+        let timerInterval = null;
+        let timeLeft = 0;
+        let selectedOption = null;
+        let orderItems = [];
 
-            let dogAnim = {
-                x: 350,
-                y: 450,
-                targetY: 450,
-                state: 'hidden', 
-                timer: 0,
-                success: true
-            };
+        let dogAnim = {
+            x: 350,
+            y: 450,
+            targetY: 450,
+            state: 'hidden', 
+            timer: 0,
+            success: true
+        };
 
-            const defaultBgGrassColor = '#4ade80';
-            const defaultBgSkyColor = '#7dd3fc';
+        const defaultBgGrassColor = '#4ade80';
+        const defaultBgSkyColor = '#7dd3fc';
 
-            const fallbackDuck = new Image();
-            fallbackDuck.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M12 32 C12 20, 24 16, 36 20 C42 16, 52 16, 56 24 C60 30, 56 40, 44 42 C38 46, 24 46, 12 32 Z" fill="%23b45309"/><circle cx="44" cy="24" r="3" fill="black"/><path d="M52 24 L60 26 L54 30 Z" fill="%23f59e0b"/><path d="M20 34 C20 34, 16 46, 24 44 C28 42, 28 34, 28 34 Z" fill="%23d97706"/><path d="M30 34 C30 34, 28 48, 36 44 C40 40, 36 34, 36 34 Z" fill="%23d97706"/></svg>';
+        const fallbackDuck = new Image();
+        fallbackDuck.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M12 32 C12 20, 24 16, 36 20 C42 16, 52 16, 56 24 C60 30, 56 40, 44 42 C38 46, 24 46, 12 32 Z" fill="%23b45309"/><circle cx="44" cy="24" r="3" fill="black"/><path d="M52 24 L60 26 L54 30 Z" fill="%23f59e0b"/><path d="M20 34 C20 34, 16 46, 24 44 C28 42, 28 34, 28 34 Z" fill="%23d97706"/><path d="M30 34 C30 34, 28 48, 36 44 C40 40, 36 34, 36 34 Z" fill="%23d97706"/></svg>';
 
-            const fallbackHelper = new Image();
-            fallbackHelper.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M20 48 C16 48, 12 36, 16 28 C20 20, 32 16, 44 24 C52 30, 52 42, 44 48 Z" fill="%2378350f"/><path d="M16 24 C12 24, 8 32, 12 38 Z" fill="%23451a03"/><path d="M44 24 C48 24, 52 32, 48 38 Z" fill="%23451a03"/><circle cx="28" cy="30" r="3" fill="white"/><circle cx="28" cy="30" r="1.5" fill="black"/><circle cx="40" cy="30" r="3" fill="white"/><circle cx="40" cy="30" r="1.5" fill="black"/><path d="M32 36 L36 36 L34 39 Z" fill="%23ef4444"/><path d="M24 46 C24 50, 40 50, 40 46 Z" fill="%231e293b"/></svg>';
+        const fallbackHelper = new Image();
+        fallbackHelper.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M20 48 C16 48, 12 36, 16 28 C20 20, 32 16, 44 24 C52 30, 52 42, 44 48 Z" fill="%2378350f"/><path d="M16 24 C12 24, 8 32, 12 38 Z" fill="%23451a03"/><path d="M44 24 C48 24, 52 32, 48 38 Z" fill="%23451a03"/><circle cx="28" cy="30" r="3" fill="white"/><circle cx="28" cy="30" r="1.5" fill="black"/><circle cx="40" cy="30" r="3" fill="white"/><circle cx="40" cy="30" r="1.5" fill="black"/><path d="M32 36 L36 36 L34 39 Z" fill="%23ef4444"/><path d="M24 46 C24 50, 40 50, 40 46 Z" fill="%231e293b"/></svg>';
 
-            let customBgImg = null;
-            let customDuckImg = null;
-            let customHelperImg = null;
+        let customBgImg = null;
+        let customDuckImg = null;
+        let customHelperImg = null;
 
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            function playGunshotSound() {
-                if (config.assets.shotSound) {
-                    let audio = new Audio(config.assets.shotSound);
-                    audio.play().catch(e => console.log('Audio error'));
-                    return;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playGunshotSound() {
+            if (config.assets.shotSound) {
+                let audio = new Audio(config.assets.shotSound);
+                audio.play().catch(e => console.log('Audio error'));
+                return;
+            }
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const bufferSize = audioCtx.sampleRate * 0.4;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
                 }
-                try {
-                    if (audioCtx.state === 'suspended') audioCtx.resume();
-                    const bufferSize = audioCtx.sampleRate * 0.4;
-                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                    const data = buffer.getChannelData(0);
-                    for (let i = 0; i < bufferSize; i++) {
-                        data[i] = Math.random() * 2 - 1;
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 1000;
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                const osc = audioCtx.createOscillator();
+                const oscGain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.15);
+                oscGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                oscGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.connect(oscGain);
+                oscGain.connect(audioCtx.destination);
+                
+                noise.start();
+                osc.start();
+                noise.stop(audioCtx.currentTime + 0.4);
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch(e){}
+        }
+
+        function playWinSound() {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(261.6, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(329.6, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(392.0, audioCtx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(523.3, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch(e){}
+        }
+
+        function playFailSound() {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch(e){}
+        }
+
+        let mouseX = 400;
+        let mouseY = 225;
+        let isMouseInCanvas = false;
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            isMouseInCanvas = true;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isMouseInCanvas = false;
+        });
+
+        function loadCustomImages() {
+            if (config.assets.bg) {
+                customBgImg = new Image();
+                customBgImg.src = config.assets.bg;
+            } else {
+                customBgImg = null;
+            }
+            if (config.assets.duck) {
+                customDuckImg = new Image();
+                customDuckImg.src = config.assets.duck;
+            } else {
+                customDuckImg = null;
+            }
+            if (config.assets.helper) {
+                customHelperImg = new Image();
+                customHelperImg.src = config.assets.helper;
+            } else {
+                customHelperImg = null;
+            }
+        }
+
+        function initGame() {
+            score = 0;
+            round = 1;
+            lives = config.livesCount;
+            currentTaskIndex = 0;
+            ammo = 3;
+            gameState = 'START';
+            ducks = [];
+            dogAnim = { x: 350, y: 450, targetY: 450, state: 'hidden', timer: 0, success: true };
+            loadCustomImages();
+            closeQuestionOverlay();
+        }
+
+        function spawnDuck() {
+            const goingRight = Math.random() > 0.5;
+            ducks.push({
+                x: goingRight ? -50 : 850,
+                y: 100 + Math.random() * 120,
+                vx: (goingRight ? 1 : -1) * (config.duckSpeed || 3),
+                vy: - (1 + Math.random() * 2),
+                width: 60,
+                height: 60,
+                flapTimer: 0,
+                isShot: false,
+                fallSpeed: 0,
+                shotTimer: 0,
+                isActive: true,
+                escape: false,
+                taskAssigned: getNextTask()
+            });
+        }
+
+        function getNextTask() {
+            if (!config.tasks || config.tasks.length === 0) return null;
+            const task = config.tasks[currentTaskIndex];
+            currentTaskIndex = (currentTaskIndex + 1) % config.tasks.length;
+            return task;
+        }
+
+        canvas.addEventListener('click', (e) => {
+            if (gameState === 'START') {
+                if (mouseX > 320 && mouseX < 480 && mouseY > 270 && mouseY < 320) {
+                    playGunshotSound();
+                    startGame();
+                }
+                return;
+            }
+
+            if (gameState !== 'PLAYING') return;
+
+            playGunshotSound();
+
+            if (ammo <= 0) return;
+            ammo--;
+
+            let hit = false;
+            for (let i = 0; i < ducks.length; i++) {
+                let d = ducks[i];
+                if (d.isActive && !d.isShot) {
+                    const dist = Math.hypot(d.x + d.width/2 - mouseX, d.y + d.height/2 - mouseY);
+                    if (dist < (config.crosshairSize / 2 + d.width / 2)) {
+                        d.isShot = true;
+                        d.vx = 0;
+                        d.vy = 0;
+                        d.shotTimer = 30; 
+                        hit = true;
+                        activeTask = d.taskAssigned;
+                        gameState = 'HIT';
+                        break;
                     }
-                    const noise = audioCtx.createBufferSource();
-                    noise.buffer = buffer;
-                    const filter = audioCtx.createBiquadFilter();
-                    filter.type = 'bandpass';
-                    filter.frequency.value = 1000;
-                    const gain = audioCtx.createGain();
-                    gain.gain.setValueAtTime(1, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-                    noise.connect(filter);
-                    filter.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    
-                    const osc = audioCtx.createOscillator();
-                    const oscGain = audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.15);
-                    oscGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                    oscGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                    osc.connect(oscGain);
-                    oscGain.connect(audioCtx.destination);
-                    
-                    noise.start();
-                    osc.start();
-                    noise.stop(audioCtx.currentTime + 0.4);
-                    osc.stop(audioCtx.currentTime + 0.2);
-                } catch(e){}
-            }
-
-            function playWinSound() {
-                try {
-                    if (audioCtx.state === 'suspended') audioCtx.resume();
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(261.6, audioCtx.currentTime);
-                    osc.frequency.setValueAtTime(329.6, audioCtx.currentTime + 0.1);
-                    osc.frequency.setValueAtTime(392.0, audioCtx.currentTime + 0.2);
-                    osc.frequency.setValueAtTime(523.3, audioCtx.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.5);
-                } catch(e){}
-            }
-
-            function playFailSound() {
-                try {
-                    if (audioCtx.state === 'suspended') audioCtx.resume();
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.4);
-                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.5);
-                } catch(e){}
-            }
-
-            let mouseX = 400;
-            let mouseY = 225;
-            let isMouseInCanvas = false;
-
-            canvas.addEventListener('mousemove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
-                mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
-                isMouseInCanvas = true;
-            });
-
-            canvas.addEventListener('mouseleave', () => {
-                isMouseInCanvas = false;
-            });
-
-            function loadCustomImages() {
-                if (config.assets.bg) {
-                    customBgImg = new Image();
-                    customBgImg.src = config.assets.bg;
-                } else {
-                    customBgImg = null;
-                }
-                if (config.assets.duck) {
-                    customDuckImg = new Image();
-                    customDuckImg.src = config.assets.duck;
-                } else {
-                    customDuckImg = null;
-                }
-                if (config.assets.helper) {
-                    customHelperImg = new Image();
-                    customHelperImg.src = config.assets.helper;
-                } else {
-                    customHelperImg = null;
                 }
             }
 
-            function initGame() {
-                score = 0;
-                round = 1;
-                lives = config.livesCount;
-                currentTaskIndex = 0;
-                ammo = 3;
-                gameState = 'START';
-                ducks = [];
-                dogAnim = { x: 350, y: 450, targetY: 450, state: 'hidden', timer: 0, success: true };
-                loadCustomImages();
-                closeQuestionOverlay();
-            }
-
-            function spawnDuck() {
-                const goingRight = Math.random() > 0.5;
-                ducks.push({
-                    x: goingRight ? -50 : 850,
-                    y: 100 + Math.random() * 120,
-                    vx: (goingRight ? 1 : -1) * (config.duckSpeed || 3),
-                    vy: - (1 + Math.random() * 2),
-                    width: 60,
-                    height: 60,
-                    flapTimer: 0,
-                    isShot: false,
-                    fallSpeed: 0,
-                    shotTimer: 0,
-                    isActive: true,
-                    escape: false,
-                    taskAssigned: getNextTask()
+            if (!hit && ammo === 0) {
+                ducks.forEach(d => {
+                    if (!d.isShot) {
+                        d.vy = -6;
+                        d.vx = 0;
+                        d.escape = true;
+                    }
                 });
+                setTimeout(() => {
+                    handleMiss();
+                }, 1200);
             }
+        });
 
-            function getNextTask() {
-                if (!config.tasks || config.tasks.length === 0) return null;
-                const task = config.tasks[currentTaskIndex];
-                currentTaskIndex = (currentTaskIndex + 1) % config.tasks.length;
-                return task;
-            }
+        function startGame() {
+            gameState = 'DOG_LAUNCH';
+            dogAnim.state = 'rising';
+            dogAnim.x = 350;
+            dogAnim.y = 450;
+            dogAnim.targetY = 280;
+            dogAnim.timer = 0;
+        }
 
-            canvas.addEventListener('click', (e) => {
-                if (gameState === 'START') {
-                    const textWidth = ctx.measureText(t[config.lang].start).width;
-                    if (mouseX > 400 - 80 && mouseX < 400 + 80 && mouseY > 270 && mouseY < 320) {
-                        playGunshotSound();
-                        startGame();
-                    }
-                    return;
-                }
-
-                if (gameState !== 'PLAYING') return;
-
-                playGunshotSound();
-
-                if (ammo <= 0) return;
-                ammo--;
-
-                let hit = false;
-                for (let i = 0; i < ducks.length; i++) {
-                    let d = ducks[i];
-                    if (d.isActive && !d.isShot) {
-                        const dist = Math.hypot(d.x + d.width/2 - mouseX, d.y + d.height/2 - mouseY);
-                        if (dist < (config.crosshairSize / 2 + d.width / 2)) {
-                            d.isShot = true;
-                            d.vx = 0;
-                            d.vy = 0;
-                            d.shotTimer = 30; 
-                            hit = true;
-                            activeTask = d.taskAssigned;
-                            gameState = 'HIT';
-                            break;
-                        }
-                    }
-                }
-
-                if (!hit && ammo === 0) {
-                    ducks.forEach(d => {
-                        if (!d.isShot) {
-                            d.vy = -6;
-                            d.vx = 0;
-                            d.escape = true;
-                        }
-                    });
-                    setTimeout(() => {
-                        handleMiss();
-                    }, 1200);
-                }
-            });
-
-            function startGame() {
-                gameState = 'DOG_LAUNCH';
+        function handleMiss() {
+            lives--;
+            ammo = 3;
+            ducks = [];
+            if (lives <= 0) {
+                gameState = 'GAMEOVER';
+                playFailSound();
+            } else {
+                gameState = 'DOG_SHOW';
+                dogAnim.success = false;
                 dogAnim.state = 'rising';
-                dogAnim.x = 350;
+                dogAnim.x = 370;
                 dogAnim.y = 450;
-                dogAnim.targetY = 280;
+                dogAnim.targetY = 300;
                 dogAnim.timer = 0;
             }
+        }
 
-            function handleMiss() {
-                lives--;
-                ammo = 3;
-                ducks = [];
-                if (lives <= 0) {
-                    gameState = 'GAMEOVER';
-                    playFailSound();
-                } else {
-                    gameState = 'DOG_SHOW';
-                    dogAnim.success = false;
-                    dogAnim.state = 'rising';
-                    dogAnim.x = 370;
-                    dogAnim.y = 450;
-                    dogAnim.targetY = 300;
-                    dogAnim.timer = 0;
-                }
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let roundDuckCounter = 0;
+
+        function update(time) {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            
+            if (customBgImg && customBgImg.complete) {
+                ctx.drawImage(customBgImg, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = defaultBgSkyColor;
+                ctx.fillRect(0, 0, canvas.width, 270);
+                ctx.fillStyle = '#065f46';
+                ctx.fillRect(0, 270, canvas.width, 180);
             }
 
-            let lastTime = 0;
-            let spawnTimer = 0;
-            let roundDuckCounter = 0;
-
-            function update(time) {
-                ctx.clearRect(0,0, canvas.width, canvas.height);
-                
-                if (customBgImg && customBgImg.complete) {
-                    ctx.drawImage(customBgImg, 0, 0, canvas.width, canvas.height);
-                } else {
-                    ctx.fillStyle = defaultBgSkyColor;
-                    ctx.fillRect(0, 0, canvas.width, 270);
-                    ctx.fillStyle = '#065f46';
-                    ctx.fillRect(0, 270, canvas.width, 180);
-                }
-
-                if (gameState === 'PLAYING') {
-                    spawnTimer += 0.016; 
-                    if (spawnTimer >= (config.spawnInterval || 3) && roundDuckCounter < (config.totalDucks || 10)) {
-                        spawnDuck();
-                        roundDuckCounter++;
-                        spawnTimer = 0;
-                    }
-
-                    ducks.forEach(d => {
-                        if (d.isActive) {
-                            d.flapTimer += 0.2;
-                            
-                            if (!d.isShot) {
-                                d.x += d.vx;
-                                d.y += d.vy;
-
-                                if (d.x < -d.width && d.vx < 0) d.vx = -d.vx;
-                                if (d.x > canvas.width && d.vx > 0) d.vx = -d.vx;
-                                if (d.y < 0) {
-                                    d.isActive = false; 
-                                    handleMiss();
-                                }
-                            } else {
-                                d.shotTimer--;
-                                if (d.shotTimer <= 0) {
-                                    d.y += 6; 
-                                    if (d.y > 330) {
-                                        d.isActive = false;
-                                        showQuestionOverlay(d.taskAssigned);
-                                    }
-                                }
-                            }
-                        }
-                    });
+            if (gameState === 'PLAYING') {
+                spawnTimer += 0.016; 
+                if (spawnTimer >= (config.spawnInterval || 3) && roundDuckCounter < (config.totalDucks || 10)) {
+                    spawnDuck();
+                    roundDuckCounter++;
+                    spawnTimer = 0;
                 }
 
                 ducks.forEach(d => {
                     if (d.isActive) {
-                        ctx.save();
-                        if (d.vx < 0) {
-                            ctx.translate(d.x + d.width, d.y);
-                            ctx.scale(-1, 1);
-                            drawDuckAsset(0, 0, d.width, d.height, d.isShot, d.flapTimer);
+                        d.flapTimer += 0.2;
+                        
+                        if (!d.isShot) {
+                            d.x += d.vx;
+                            d.y += d.vy;
+
+                            if (d.x < -d.width && d.vx < 0) d.vx = -d.vx;
+                            if (d.x > canvas.width && d.vx > 0) d.vx = -d.vx;
+                            if (d.y < 0) {
+                                d.isActive = false; 
+                                handleMiss();
+                            }
                         } else {
-                            ctx.translate(d.x, d.y);
-                            drawDuckAsset(0, 0, d.width, d.height, d.isShot, d.flapTimer);
-                        }
-                        ctx.restore();
-                    }
-                });
-
-                updateDogAnimation();
-                drawForegroundGrass();
-                drawGameUI();
-
-                if (isMouseInCanvas && (gameState === 'PLAYING' || gameState === 'START')) {
-                    drawCrosshair();
-                }
-
-                drawGameScreens();
-                requestAnimationFrame(update);
-            }
-
-            function drawDuckAsset(x, y, w, h, isShot, flapTimer) {
-                if (isShot) {
-                    ctx.fillStyle = '#ef4444';
-                    ctx.fillRect(x + 5, y + 5, w - 10, h - 10);
-                }
-                if (customDuckImg && customDuckImg.complete) {
-                    ctx.drawImage(customDuckImg, x, y, w, h);
-                } else {
-                    ctx.drawImage(fallbackDuck, x, y, w, h);
-                }
-            }
-
-            function drawForegroundGrass() {
-                ctx.fillStyle = '#15803d'; 
-                ctx.fillRect(0, 310, canvas.width, 140);
-                
-                ctx.fillStyle = '#166534';
-                for (let i = 0; i < canvas.width; i += 20) {
-                    ctx.beginPath();
-                    ctx.moveTo(i, 320);
-                    ctx.lineTo(i + 10, 290);
-                    ctx.lineTo(i + 20, 320);
-                    ctx.fill();
-                }
-            }
-
-            function updateDogAnimation() {
-                if (gameState === 'DOG_LAUNCH' || gameState === 'DOG_SHOW') {
-                    if (dogAnim.state === 'rising') {
-                        dogAnim.y -= 3;
-                        if (dogAnim.y <= dogAnim.targetY) {
-                            dogAnim.state = 'showing';
-                            dogAnim.timer = 60; 
-                        }
-                    } else if (dogAnim.state === 'showing') {
-                        dogAnim.timer--;
-                        if (dogAnim.timer <= 0) {
-                            dogAnim.state = 'lowering';
-                        }
-                    } else if (dogAnim.state === 'lowering') {
-                        dogAnim.y += 3;
-                        if (dogAnim.y >= 450) {
-                            dogAnim.state = 'hidden';
-                            if (gameState === 'DOG_LAUNCH') {
-                                gameState = 'PLAYING';
-                                ammo = 3;
-                                spawnTimer = 0;
-                                roundDuckCounter = 0;
-                            } else {
-                                gameState = 'PLAYING';
+                            d.shotTimer--;
+                            if (d.shotTimer <= 0) {
+                                d.y += 6; 
+                                if (d.y > 330) {
+                                    d.isActive = false;
+                                    showQuestionOverlay(d.taskAssigned);
+                                }
                             }
                         }
                     }
-
-                    if (dogAnim.state !== 'hidden') {
-                        if (customHelperImg && customHelperImg.complete) {
-                            ctx.drawImage(customHelperImg, dogAnim.x, dogAnim.y, 80, 80);
-                        } else {
-                            ctx.drawImage(fallbackHelper, dogAnim.x, dogAnim.y, 80, 80);
-                        }
-                    }
-                }
-            }
-
-            function drawCrosshair() {
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 3;
-                const size = config.crosshairSize;
-                ctx.beginPath();
-                ctx.arc(mouseX, mouseY, size / 2, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(mouseX - size/1.5, mouseY);
-                ctx.lineTo(mouseX + size/1.5, mouseY);
-                ctx.moveTo(mouseX, mouseY - size/1.5);
-                ctx.lineTo(mouseX, mouseY + size/1.5);
-                ctx.stroke();
-            }
-
-            function drawGameUI() {
-                ctx.fillStyle = '#27272a';
-                ctx.fillRect(0, 390, canvas.width, 60);
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 14px ' + (config.fontFamily === 'Inter' ? 'sans-serif' : config.fontFamily);
-
-                ctx.fillText(t[config.lang].round + ' : ' + round, 30, 425);
-                ctx.fillText('AMMO:', 160, 425);
-                for (let i = 0; i < 3; i++) {
-                    ctx.fillStyle = i < ammo ? '#f59e0b' : '#4b5563';
-                    ctx.fillRect(230 + (i * 12), 410, 8, 20);
-                }
-
-                ctx.fillStyle = '#ffffff';
-                ctx.fillText('DUCKS:', 300, 425);
-                for (let i = 0; i < (config.totalDucks || 10); i++) {
-                    ctx.fillStyle = i < roundDuckCounter ? '#ef4444' : '#4b5563';
-                    ctx.beginPath();
-                    ctx.arc(380 + (i * 18), 420, 6, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
-                ctx.fillStyle = '#ffffff';
-                ctx.fillText(t[config.lang].score + ': ' + score, 600, 425);
-
-                let lifeEmojiStr = '';
-                for(let i=0; i < lives; i++) {
-                    lifeEmojiStr += config.lifeEmoji || '❤️';
-                }
-                ctx.fillText(lifeEmojiStr, 710, 425);
-            }
-
-            function drawGameScreens() {
-                if (gameState === 'START') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                    ctx.fillRect(0, 0, canvas.width, 390);
-
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
-                    ctx.textAlign = 'center';
-                    ctx.fillText(config.gameTitleText, 400, 180);
-
-                    ctx.font = '16px ' + config.fontFamily;
-                    ctx.fillStyle = '#fbbf24';
-                    ctx.fillText('Автор: Гальмиз Мария Александровна', 400, 220);
-
-                    ctx.fillStyle = '#10b981';
-                    ctx.fillRect(320, 270, 160, 50);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 14px ' + config.fontFamily;
-                    ctx.fillText(t[config.lang].start, 400, 302);
-                    ctx.textAlign = 'left';
-                } else if (gameState === 'GAMEOVER') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.8)';
-                    ctx.fillRect(0, 0, canvas.width, 390);
-
-                    ctx.fillStyle = '#ef4444';
-                    ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
-                    ctx.textAlign = 'center';
-                    ctx.fillText(t[config.lang].gameOver, 400, 180);
-
-                    ctx.font = '16px ' + config.fontFamily;
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText('Итоговый счет: ' + score, 400, 220);
-                    ctx.textAlign = 'left';
-                } else if (gameState === 'VICTORY') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.85)';
-                    ctx.fillRect(0, 0, canvas.width, 390);
-
-                    ctx.fillStyle = '#10b981';
-                    ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
-                    ctx.textAlign = 'center';
-                    ctx.fillText(t[config.lang].victory, 400, 180);
-
-                    ctx.font = '18px ' + config.fontFamily;
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText('Побендый счет: ' + score + '!', 400, 220);
-                    ctx.textAlign = 'left';
-                }
-            }
-
-            function showQuestionOverlay(task) {
-                if (!task) {
-                    score += 100;
-                    gameState = 'PLAYING';
-                    ammo = 3;
-                    checkVictoryCondition();
-                    return;
-                }
-
-                gameState = 'QUESTION';
-                activeTask = task;
-                
-                const overlay = document.getElementById('qOverlay');
-                overlay.style.display = 'flex';
-
-                const qText = document.getElementById('qText');
-                qText.innerText = task.question;
-                qText.style.fontSize = config.questionFontSize + 'px';
-
-                const contentDiv = document.getElementById('qContent');
-                contentDiv.innerHTML = '';
-
-                const submitBtn = document.getElementById('qSubmitBtn');
-                submitBtn.innerText = t[config.lang].submit;
-                submitBtn.style.display = 'block';
-                submitBtn.onclick = checkQuestionAnswer;
-
-                selectedOption = null;
-                document.getElementById('qCard').style.fontFamily = config.fontFamily;
-
-                if (task.type === 'input') {
-                    contentDiv.innerHTML = '<input type="text" id="answerField" class="text-input" placeholder="' + t[config.lang].answer + '" autofocus>';
-                } else if (task.type === 'choice') {
-                    const choiceContainer = document.createElement('div');
-                    choiceContainer.className = 'w-full space-y-2';
-                    (task.options || []).forEach((opt, idx) => {
-                        const btn = document.createElement('button');
-                        btn.className = 'option-btn';
-                        btn.innerText = opt;
-                        btn.onclick = () => {
-                            Array.from(choiceContainer.children).forEach(b => b.classList.remove('selected'));
-                            btn.classList.add('selected');
-                            selectedOption = idx;
-                        };
-                        choiceContainer.appendChild(btn);
-                    });
-                    contentDiv.appendChild(choiceContainer);
-                } else if (task.type === 'oral') {
-                    contentDiv.innerHTML = '<button id="showOralAnswerBtn" class="action-btn mb-2" onclick="revealOralAnswer(\'' + task.correct.replace(/'/g, "\\'") + '\')">' + t[config.lang].showAnswer + '</button><div id="oralAnswerText" class="oral-answer-box" style="display:none;"></div><div id="oralControlGroup" class="oral-btn-group" style="display:none;"><button onclick="handleOralResult(true)" class="action-btn oral-yes w-full">' + t[config.lang].correctBtn + '</button><button onclick="handleOralResult(false)" class="action-btn oral-no w-full">' + t[config.lang].incorrectBtn + '</button></div>';
-                    submitBtn.style.display = 'none';
-                } else if (task.type === 'order') {
-                    orderItems = [...(task.items || [])].sort(() => Math.random() - 0.5);
-                    const orderContainer = document.createElement('div');
-                    orderContainer.className = 'order-container';
-                    renderOrderItems(orderContainer);
-                    contentDiv.appendChild(orderContainer);
-                }
-
-                if (config.questionTimer > 0) {
-                    timeLeft = config.questionTimer;
-                    updateTimerBar();
-                    clearInterval(timerInterval);
-                    timerInterval = setInterval(() => {
-                        timeLeft -= 0.1;
-                        if (timeLeft <= 0) {
-                            clearInterval(timerInterval);
-                            timeOutAnswer();
-                        } else {
-                            updateTimerBar();
-                        }
-                    }, 100);
-                } else {
-                    document.getElementById('timerProgress').style.width = '100%';
-                }
-            }
-
-            function renderOrderItems(container) {
-                container.innerHTML = '';
-                orderItems.forEach((item, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'order-item';
-                    div.innerHTML = '<span>' + item + '</span><div class="flex gap-1"><button onclick="moveOrderItem(' + index + ', -1)" class="text-xs bg-slate-700 p-1 rounded hover:bg-slate-600">▲</button><button onclick="moveOrderItem(' + index + ', 1)" class="text-xs bg-slate-700 p-1 rounded hover:bg-slate-600">▼</button></div>';
-                    container.appendChild(div);
                 });
             }
 
-            window.moveOrderItem = function(index, dir) {
-                const target = index + dir;
-                if (target >= 0 && target < orderItems.length) {
-                    const temp = orderItems[index];
-                    orderItems[index] = orderItems[target];
-                    orderItems[target] = temp;
-                    const container = document.querySelector('.order-container');
-                    if (container) renderOrderItems(container);
+            ducks.forEach(d => {
+                if (d.isActive) {
+                    ctx.save();
+                    if (d.vx < 0) {
+                        ctx.translate(d.x + d.width, d.y);
+                        ctx.scale(-1, 1);
+                        drawDuckAsset(0, 0, d.width, d.height, d.isShot, d.flapTimer);
+                    } else {
+                        ctx.translate(d.x, d.y);
+                        drawDuckAsset(0, 0, d.width, d.height, d.isShot, d.flapTimer);
+                    }
+                    ctx.restore();
                 }
-            };
+            });
 
-            window.revealOralAnswer = function(correctAnswer) {
-                document.getElementById('showOralAnswerBtn').style.display = 'none';
-                const textDiv = document.getElementById('oralAnswerText');
-                textDiv.style.display = 'block';
-                textDiv.innerText = correctAnswer;
-                document.getElementById('oralControlGroup').style.display = 'flex';
-            };
+            updateDogAnimation();
+            drawForegroundGrass();
+            drawGameUI();
 
-            window.handleOralResult = function(isCorrect) {
+            if (isMouseInCanvas && (gameState === 'PLAYING' || gameState === 'START')) {
+                drawCrosshair();
+            }
+
+            drawGameScreens();
+            requestAnimationFrame(update);
+        }
+
+        function drawDuckAsset(x, y, w, h, isShot, flapTimer) {
+            if (isShot) {
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(x + 5, y + 5, w - 10, h - 10);
+            }
+            if (customDuckImg && customDuckImg.complete) {
+                ctx.drawImage(customDuckImg, x, y, w, h);
+            } else {
+                ctx.drawImage(fallbackDuck, x, y, w, h);
+            }
+        }
+
+        // Draw Grass Foreground layer over helper/ducks
+        function drawForegroundGrass() {
+            ctx.fillStyle = '#15803d'; 
+            ctx.fillRect(0, 310, canvas.width, 140);
+            
+            ctx.fillStyle = '#166534';
+            for (let i = 0; i < canvas.width; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(i, 320);
+                ctx.lineTo(i + 10, 290);
+                ctx.lineTo(i + 20, 320);
+                ctx.fill();
+            }
+        }
+
+        function updateDogAnimation() {
+            if (gameState === 'DOG_LAUNCH' || gameState === 'DOG_SHOW') {
+                if (dogAnim.state === 'rising') {
+                    dogAnim.y -= 3;
+                    if (dogAnim.y <= dogAnim.targetY) {
+                        dogAnim.state = 'showing';
+                        dogAnim.timer = 60; 
+                    }
+                } else if (dogAnim.state === 'showing') {
+                    dogAnim.timer--;
+                    if (dogAnim.timer <= 0) {
+                        dogAnim.state = 'lowering';
+                    }
+                } else if (dogAnim.state === 'lowering') {
+                    dogAnim.y += 3;
+                    if (dogAnim.y >= 450) {
+                        dogAnim.state = 'hidden';
+                        if (gameState === 'DOG_LAUNCH') {
+                            gameState = 'PLAYING';
+                            ammo = 3;
+                            spawnTimer = 0;
+                            roundDuckCounter = 0;
+                        } else {
+                            gameState = 'PLAYING';
+                        }
+                    }
+                }
+
+                if (dogAnim.state !== 'hidden') {
+                    if (customHelperImg && customHelperImg.complete) {
+                        ctx.drawImage(customHelperImg, dogAnim.x, dogAnim.y, 80, 80);
+                    } else {
+                        ctx.drawImage(fallbackHelper, dogAnim.x, dogAnim.y, 80, 80);
+                    }
+                }
+            }
+        }
+
+        function drawCrosshair() {
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            const size = config.crosshairSize;
+            ctx.beginPath();
+            ctx.arc(mouseX, mouseY, size / 2, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(mouseX - size/1.5, mouseY);
+            ctx.lineTo(mouseX + size/1.5, mouseY);
+            ctx.moveTo(mouseX, mouseY - size/1.5);
+            ctx.lineTo(mouseX, mouseY + size/1.5);
+            ctx.stroke();
+        }
+
+        function drawGameUI() {
+            ctx.fillStyle = '#27272a';
+            ctx.fillRect(0, 390, canvas.width, 60);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 14px ' + (config.fontFamily === 'Inter' ? 'sans-serif' : config.fontFamily);
+
+            ctx.fillText(t[config.lang].round + ' : ' + round, 30, 425);
+            ctx.fillText('AMMO:', 160, 425);
+            for (let i = 0; i < 3; i++) {
+                ctx.fillStyle = i < ammo ? '#f59e0b' : '#4b5563';
+                ctx.fillRect(230 + (i * 12), 410, 8, 20);
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('DUCKS:', 300, 425);
+            for (let i = 0; i < (config.totalDucks || 10); i++) {
+                ctx.fillStyle = i < roundDuckCounter ? '#ef4444' : '#4b5563';
+                ctx.beginPath();
+                ctx.arc(380 + (i * 18), 420, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(t[config.lang].score + ': ' + score, 600, 425);
+
+            let lifeEmojiStr = '';
+            for(let i=0; i < lives; i++) {
+                lifeEmojiStr += config.lifeEmoji || '❤️';
+            }
+            ctx.fillText(lifeEmojiStr, 710, 425);
+        }
+
+        function drawGameScreens() {
+            if (gameState === 'START') {
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                ctx.fillRect(0, 0, canvas.width, 390);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
+                ctx.textAlign = 'center';
+                ctx.fillText(config.gameTitleText, 400, 180);
+
+                ctx.font = '16px ' + config.fontFamily;
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillText('Автор: Гальмиз Мария Александровна', 400, 220);
+
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(320, 270, 160, 50);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px ' + config.fontFamily;
+                ctx.fillText(t[config.lang].start, 400, 302);
+                ctx.textAlign = 'left';
+            } else if (gameState === 'GAMEOVER') {
+                ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                ctx.fillRect(0, 0, canvas.width, 390);
+
+                ctx.fillStyle = '#ef4444';
+                ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
+                ctx.textAlign = 'center';
+                ctx.fillText(t[config.lang].gameOver, 400, 180);
+
+                ctx.font = '16px ' + config.fontFamily;
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('Итоговый счет: ' + score, 400, 220);
+                ctx.textAlign = 'left';
+            } else if (gameState === 'VICTORY') {
+                ctx.fillStyle = 'rgba(0,0,0,0.85)';
+                ctx.fillRect(0, 0, canvas.width, 390);
+
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
+                ctx.textAlign = 'center';
+                ctx.fillText(t[config.lang].victory, 400, 180);
+
+                ctx.font = '18px ' + config.fontFamily;
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('Побендый счет: ' + score + '!', 400, 220);
+                ctx.textAlign = 'left';
+            }
+        }
+
+        function showQuestionOverlay(task) {
+            if (!task) {
+                score += 100;
+                gameState = 'PLAYING';
+                ammo = 3;
+                checkVictoryCondition();
+                return;
+            }
+
+            gameState = 'QUESTION';
+            activeTask = task;
+            
+            const overlay = document.getElementById('qOverlay');
+            overlay.style.display = 'flex';
+
+            const qText = document.getElementById('qText');
+            qText.innerText = task.question;
+            qText.style.fontSize = config.questionFontSize + 'px';
+
+            const contentDiv = document.getElementById('qContent');
+            contentDiv.innerHTML = '';
+
+            const submitBtn = document.getElementById('qSubmitBtn');
+            submitBtn.innerText = t[config.lang].submit;
+            submitBtn.style.display = 'block';
+            submitBtn.onclick = checkQuestionAnswer;
+
+            selectedOption = null;
+            document.getElementById('qCard').style.fontFamily = config.fontFamily;
+
+            if (task.type === 'input') {
+                contentDiv.innerHTML = '<input type="text" id="answerField" class="text-input" placeholder="' + t[config.lang].answer + '" autofocus>';
+            } else if (task.type === 'choice') {
+                const choiceContainer = document.createElement('div');
+                choiceContainer.className = 'w-full space-y-2';
+                (task.options || []).forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => {
+                        Array.from(choiceContainer.children).forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        selectedOption = idx;
+                    };
+                    choiceContainer.appendChild(btn);
+                });
+                contentDiv.appendChild(choiceContainer);
+            } else if (task.type === 'oral') {
+                contentDiv.innerHTML = '<button id="showOralAnswerBtn" class="action-btn mb-2" onclick="revealOralAnswer(\'' + task.correct.replace(/'/g, "\\'") + '\')">' + t[config.lang].showAnswer + '</button><div id="oralAnswerText" class="oral-answer-box" style="display:none;"></div><div id="oralControlGroup" class="oral-btn-group" style="display:none;"><button onclick="handleOralResult(true)" class="action-btn oral-yes w-full">' + t[config.lang].correctBtn + '</button><button onclick="handleOralResult(false)" class="action-btn oral-no w-full">' + t[config.lang].incorrectBtn + '</button></div>';
+                submitBtn.style.display = 'none';
+            } else if (task.type === 'order') {
+                orderItems = [...(task.items || [])].sort(() => Math.random() - 0.5);
+                const orderContainer = document.createElement('div');
+                orderContainer.className = 'order-container';
+                renderOrderItems(orderContainer);
+                contentDiv.appendChild(orderContainer);
+            }
+
+            if (config.questionTimer > 0) {
+                timeLeft = config.questionTimer;
+                updateTimerBar();
                 clearInterval(timerInterval);
-                if (isCorrect) {
+                timerInterval = setInterval(() => {
+                    timeLeft -= 0.1;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timeOutAnswer();
+                    } else {
+                        updateTimerBar();
+                    }
+                }, 100);
+            } else {
+                document.getElementById('timerProgress').style.width = '100%';
+            }
+        }
+
+        function renderOrderItems(container) {
+            container.innerHTML = '';
+            orderItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'order-item';
+                div.innerHTML = '<span>' + item + '</span><div class="flex gap-1"><button onclick="moveOrderItem(' + index + ', -1)" class="text-xs bg-slate-700 p-1 rounded hover:bg-slate-600">▲</button><button onclick="moveOrderItem(' + index + ', 1)" class="text-xs bg-slate-700 p-1 rounded hover:bg-slate-600">▼</button></div>';
+                container.appendChild(div);
+            });
+        }
+
+        window.moveOrderItem = function(index, dir) {
+            const target = index + dir;
+            if (target >= 0 && target < orderItems.length) {
+                const temp = orderItems[index];
+                orderItems[index] = orderItems[target];
+                orderItems[target] = temp;
+                const container = document.querySelector('.order-container');
+                if (container) renderOrderItems(container);
+            }
+        };
+
+        window.revealOralAnswer = function(correctAnswer) {
+            document.getElementById('showOralAnswerBtn').style.display = 'none';
+            const textDiv = document.getElementById('oralAnswerText');
+            textDiv.style.display = 'block';
+            textDiv.innerText = correctAnswer;
+            document.getElementById('oralControlGroup').style.display = 'flex';
+        };
+
+        window.handleOralResult = function(isCorrect) {
+            clearInterval(timerInterval);
+            if (isCorrect) {
+                answerCorrect();
+            } else {
+                answerIncorrect();
+            }
+        };
+
+        function updateTimerBar() {
+            const pct = (timeLeft / config.questionTimer) * 100;
+            document.getElementById('timerProgress').style.width = pct + '%';
+        }
+
+        function timeOutAnswer() {
+            answerIncorrect();
+        }
+
+        function checkQuestionAnswer() {
+            clearInterval(timerInterval);
+            if (activeTask.type === 'input') {
+                const val = document.getElementById('answerField').value.trim();
+                if (val.toLowerCase() === activeTask.correct.toLowerCase()) {
                     answerCorrect();
                 } else {
                     answerIncorrect();
                 }
-            };
-
-            function updateTimerBar() {
-                const pct = (timeLeft / config.questionTimer) * 100;
-                document.getElementById('timerProgress').style.width = pct + '%';
-            }
-
-            function timeOutAnswer() {
-                answerIncorrect();
-            }
-
-            function checkQuestionAnswer() {
-                clearInterval(timerInterval);
-                if (activeTask.type === 'input') {
-                    const val = document.getElementById('answerField').value.trim();
-                    if (val.toLowerCase() === activeTask.correct.toLowerCase()) {
-                        answerCorrect();
-                    } else {
-                        answerIncorrect();
-                    }
-                } else if (activeTask.type === 'choice') {
-                    if (selectedOption === activeTask.correct) {
-                        answerCorrect();
-                    } else {
-                        answerIncorrect();
-                    }
-                } else if (activeTask.type === 'order') {
-                    const isSorted = orderItems.every((val, i) => val === activeTask.items[i]);
-                    if (isSorted) {
-                        answerCorrect();
-                    } else {
-                        answerIncorrect();
-                    }
-                }
-            }
-
-            function answerCorrect() {
-                score += 100;
-                playWinSound();
-                ducks = ducks.filter(d => !d.isShot);
-                closeQuestionOverlay();
-                gameState = 'DOG_SHOW';
-                dogAnim.success = true;
-                dogAnim.state = 'rising';
-                dogAnim.x = 350;
-                dogAnim.y = 450;
-                dogAnim.targetY = 280;
-                dogAnim.timer = 60;
-                ammo = 3;
-                checkVictoryCondition();
-            }
-
-            function answerIncorrect() {
-                playFailSound();
-                lives--;
-                ducks.forEach(d => {
-                    if (d.isShot) {
-                        d.isShot = false;
-                        d.vx = (Math.random() > 0.5 ? 1 : -1) * (config.duckSpeed || 3);
-                        d.vy = - (1 + Math.random() * 2);
-                    }
-                });
-                closeQuestionOverlay();
-                if (lives <= 0) {
-                    gameState = 'GAMEOVER';
+            } else if (activeTask.type === 'choice') {
+                if (selectedOption === activeTask.correct) {
+                    answerCorrect();
                 } else {
-                    gameState = 'PLAYING';
-                    ammo = 3;
+                    answerIncorrect();
+                }
+            } else if (activeTask.type === 'order') {
+                const isSorted = orderItems.every((val, i) => val === activeTask.items[i]);
+                if (isSorted) {
+                    answerCorrect();
+                } else {
+                    answerIncorrect();
                 }
             }
+        }
 
-            function closeQuestionOverlay() {
-                document.getElementById('qOverlay').style.display = 'none';
-            }
+        function answerCorrect() {
+            score += 100;
+            playWinSound();
+            ducks = ducks.filter(d => !d.isShot);
+            closeQuestionOverlay();
+            gameState = 'DOG_SHOW';
+            dogAnim.success = true;
+            dogAnim.state = 'rising';
+            dogAnim.x = 350;
+            dogAnim.y = 450;
+            dogAnim.targetY = 280;
+            dogAnim.timer = 60;
+            ammo = 3;
+            checkVictoryCondition();
+        }
 
-            function checkVictoryCondition() {
-                if (roundDuckCounter >= (config.totalDucks || 10) && ducks.length === 0) {
-                    gameState = 'VICTORY';
+        function answerIncorrect() {
+            playFailSound();
+            lives--;
+            ducks.forEach(d => {
+                if (d.isShot) {
+                    d.isShot = false;
+                    d.vx = (Math.random() > 0.5 ? 1 : -1) * (config.duckSpeed || 3);
+                    d.vy = - (1 + Math.random() * 2);
                 }
+            });
+            closeQuestionOverlay();
+            if (lives <= 0) {
+                gameState = 'GAMEOVER';
+            } else {
+                gameState = 'PLAYING';
+                ammo = 3;
             }
+        }
 
-            initGame();
-            requestAnimationFrame(update);
-        `;
+        function closeQuestionOverlay() {
+            document.getElementById('qOverlay').style.display = 'none';
+        }
 
-        // Inject engine for local live-preview
+        function checkVictoryCondition() {
+            if (roundDuckCounter >= (config.totalDucks || 10) && ducks.length === 0) {
+                gameState = 'VICTORY';
+            }
+        }
+
+        // Initialize the game preview right away
+        initGame();
+        requestAnimationFrame(update);
+
+        // Sync Preview Configs dynamically 
         function syncPreviewConfigs() {
-            if (window.loadCustomImages) {
-                window.loadCustomImages();
-            }
+            loadCustomImages();
         }
 
         function resetPreviewGame() {
-            if (window.initGame) {
-                window.initGame();
-            }
+            initGame();
         }
 
-        // Execute JS locally for Preview
-        const scriptElement = document.createElement('script');
-        scriptElement.innerHTML = `
-            const config = window.config || {};
-            const t = window.t || {};
-        ` + gameEngineJSCode;
-        document.body.appendChild(scriptElement);
-
-        // Initial tasks rendering
+        // Initial render
         renderTasksList();
-        syncPreviewConfigs();
     </script>
 </body>
 </html>
