@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор Duck Hunt — Гальмиз Мария Александровна</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Play:wght@400;700&family=Inter:wght@400;600;800&family=Comfortaa:wght@400;700&family=Montserrat:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .retro-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between shadow-lg z-10">
+        <div class="flex items-center space-x-3">
+            <span class="text-3xl">🦆</span>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    Duck Hunt <span class="bg-amber-500 text-slate-950 text-xs px-2 py-0.5 rounded font-black uppercase">Конструктор игр</span>
+                </h1>
+                <p class="text-xs text-slate-400">Создавайте обучающие игры для ваших учеников</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button onclick="saveProject()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 border border-slate-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                Сохранить проект
+            </button>
+            <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 border border-slate-700 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                Загрузить проект
+                <input type="file" id="projectFile" class="hidden" accept=".json" onchange="loadProject(event)">
+            </label>
+            <button onclick="copyGeniallyCode()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-md shadow-indigo-900/30">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 002-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                Код для Genially
+            </button>
+            <button onclick="downloadGameHTML()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-md shadow-emerald-900/30">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l4 4m-4-4h18"/></svg>
+                Скачать HTML
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex overflow-hidden">
+        <!-- Editor Panel (Left) -->
+        <section class="w-[45%] bg-slate-900/50 border-r border-slate-800 flex flex-col overflow-y-auto p-6 space-y-6">
+            <!-- General Configuration Card -->
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-4">
+                <h3 class="text-md font-bold text-slate-200 border-b border-slate-800 pb-2 flex items-center gap-2">
+                    <span class="text-amber-500">⚙️</span> Основные настройки
+                </h3>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Language Selection -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Язык интерфейса</label>
+                        <select id="langSelect" onchange="updateConfig('lang', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                            <option value="ru">Русский</option>
+                            <option value="en">English</option>
+                            <option value="uz">O'zbekcha</option>
+                            <option value="kz">Қазақша</option>
+                        </select>
+                    </div>
+
+                    <!-- Fonts List -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Шрифт интерфейса</label>
+                        <select id="fontSelect" onchange="updateConfig('fontFamily', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                            <option value="Inter">Inter (Современный)</option>
+                            <option value="'Press Start 2P'">Press Start 2P (Ретро)</option>
+                            <option value="Play">Play (Строгий)</option>
+                            <option value="Comfortaa">Comfortaa (Округлый)</option>
+                            <option value="Montserrat">Montserrat (Стильный)</option>
+                            <option value="Pacifico">Pacifico (Курсив)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Font Sizes -->
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Название (px)</label>
+                        <input type="number" id="titleFontSize" oninput="updateConfig('titleFontSize', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white" value="32">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Вопрос (px)</label>
+                        <input type="number" id="questionFontSize" oninput="updateConfig('questionFontSize', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white" value="22">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Ответы (px)</label>
+                        <input type="number" id="answerFontSize" oninput="updateConfig('answerFontSize', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white" value="18">
+                    </div>
+                </div>
+
+                <!-- Sliders -->
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
+                            <span>Размер прицела:</span>
+                            <span id="crosshairSizeVal" class="text-amber-400 font-bold">50px</span>
+                        </div>
+                        <input type="range" id="crosshairSize" min="20" max="120" value="50" oninput="updateConfig('crosshairSize', this.value)" class="w-full accent-amber-500">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
+                                <span>Частота уток (сек):</span>
+                                <span id="spawnIntervalVal" class="text-amber-400 font-bold">3с</span>
+                            </div>
+                            <input type="range" id="spawnInterval" min="1" max="10" step="0.5" value="3" oninput="updateConfig('spawnInterval', this.value)" class="w-full accent-amber-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
+                                <span>Скорость уток:</span>
+                                <span id="duckSpeedVal" class="text-amber-400 font-bold">3</span>
+                            </div>
+                            <input type="range" id="duckSpeed" min="1" max="10" step="1" value="3" oninput="updateConfig('duckSpeed', this.value)" class="w-full accent-amber-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Кол-во уток в раунде</label>
+                            <input type="number" id="totalDucks" min="1" max="20" value="10" oninput="updateConfig('totalDucks', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Количество жизней</label>
+                            <input type="number" id="livesCount" min="1" max="10" value="3" oninput="updateConfig('livesCount', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Эмодзи жизни</label>
+                            <input type="text" id="lifeEmoji" value="❤️" oninput="updateConfig('lifeEmoji', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white text-center">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Таймер на вопрос (сек, 0=без лимита)</label>
+                            <input type="number" id="questionTimer" min="0" max="120" value="20" oninput="updateConfig('questionTimer', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Название игры на экране</label>
+                            <input type="text" id="gameTitleText" value="DUCK HUNT" oninput="updateConfig('gameTitleText', this.value)" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphics & Assets Card -->
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-4">
+                <h3 class="text-md font-bold text-slate-200 border-b border-slate-850 pb-2 flex items-center gap-2">
+                    <span class="text-emerald-500">🖼️</span> Графика и звуки
+                </h3>
+                
+                <div class="grid grid-cols-3 gap-2">
+                    <!-- Background Upload -->
+                    <div class="flex flex-col items-center justify-center border border-dashed border-slate-700 p-2 rounded bg-slate-800/40 relative hover:bg-slate-800 transition">
+                        <span class="text-xl mb-1">🏞️</span>
+                        <span class="text-[10px] text-center text-slate-400">Фон игры</span>
+                        <input type="file" id="bgUpload" accept="image/*" onchange="handleAssetUpload(event, 'bg')" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <button id="resetBgBtn" onclick="resetAsset('bg'); event.stopPropagation();" class="hidden mt-1 text-[9px] bg-red-950 text-red-300 px-1 py-0.5 rounded">Сбросить</button>
+                    </div>
+
+                    <!-- Duck Upload -->
+                    <div class="flex flex-col items-center justify-center border border-dashed border-slate-700 p-2 rounded bg-slate-800/40 relative hover:bg-slate-800 transition">
+                        <span class="text-xl mb-1">🦆</span>
+                        <span class="text-[10px] text-center text-slate-400">Спрайт утки</span>
+                        <input type="file" id="duckUpload" accept="image/*" onchange="handleAssetUpload(event, 'duck')" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <button id="resetDuckBtn" onclick="resetAsset('duck'); event.stopPropagation();" class="hidden mt-1 text-[9px] bg-red-950 text-red-300 px-1 py-0.5 rounded">Сбросить</button>
+                    </div>
+
+                    <!-- Helper (Dog) Upload -->
+                    <div class="flex flex-col items-center justify-center border border-dashed border-slate-700 p-2 rounded bg-slate-800/40 relative hover:bg-slate-800 transition">
+                        <span class="text-xl mb-1">🐕</span>
+                        <span class="text-[10px] text-center text-slate-400">Помощник</span>
+                        <input type="file" id="helperUpload" accept="image/*" onchange="handleAssetUpload(event, 'helper')" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <button id="resetHelperBtn" onclick="resetAsset('helper'); event.stopPropagation();" class="hidden mt-1 text-[9px] bg-red-950 text-red-300 px-1 py-0.5 rounded">Сбросить</button>
+                    </div>
+                </div>
+
+                <!-- Custom Shot Sound Option -->
+                <div class="border border-slate-850 p-3 rounded-lg bg-slate-800/20">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Звук выстрела (по умолчанию - синтезатор)</label>
+                    <input type="file" id="shotSoundUpload" accept="audio/*" onchange="handleAudioUpload(event)" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+                    <button id="resetAudioBtn" onclick="resetAudio();" class="hidden mt-1 text-[9px] bg-red-950 text-red-300 px-2 py-0.5 rounded">Сбросить звук</button>
+                </div>
+            </div>
+
+            <!-- Task Editor Section -->
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-850 pb-2">
+                    <h3 class="text-md font-bold text-slate-200 flex items-center gap-2">
+                        <span class="text-indigo-500">📝</span> Список заданий
+                    </h3>
+                    <button onclick="addNewTask()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded font-semibold transition flex items-center gap-1">
+                        ➕ Добавить
+                    </button>
+                </div>
+
+                <div id="tasksList" class="space-y-3">
+                    <!-- Tasks will be rendered here dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Preview Window Panel (Right) -->
+        <section class="w-[55%] bg-slate-950 p-6 flex flex-col justify-between relative overflow-hidden">
+            <!-- Header bar of Preview -->
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm font-semibold text-slate-400 tracking-wider flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    ОКНО ПРЕДПРОСМОТРА (РЕАЛЬНОЕ ВРЕМЯ)
+                </span>
+                <button onclick="resetPreviewGame()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded border border-slate-700 transition flex items-center gap-1">
+                    🔄 Перезапустить
+                </button>
+            </div>
+
+            <!-- Screen Game Container -->
+            <div class="flex-1 flex items-center justify-center w-full relative">
+                <!-- Ratio Box for Game (16:9) -->
+                <div class="w-full max-w-[800px] aspect-[16/9] bg-sky-300 border-4 border-slate-850 rounded-lg shadow-2xl relative overflow-hidden select-none" id="gameFrameContainer">
+                    <canvas id="gameCanvas" width="800" height="450" class="w-full h-full block cursor-none"></canvas>
+                    
+                    <!-- Question Overlay -->
+                    <div id="qOverlay" class="absolute inset-0 bg-black/85 flex items-center justify-center p-6 hidden">
+                        <div id="qCard" class="bg-slate-900 border-2 border-amber-500 rounded-xl p-6 w-full max-w-[550px] shadow-2xl text-center flex flex-col justify-between min-h-[300px]">
+                            <!-- Timer bar -->
+                            <div id="timerBar" class="w-full bg-slate-850 h-2 rounded-full overflow-hidden mb-3">
+                                <div id="timerProgress" class="bg-amber-500 h-full transition-all duration-100" style="width: 100%;"></div>
+                            </div>
+                            
+                            <!-- Question Title / Game info -->
+                            <div class="text-xs text-amber-500 uppercase tracking-widest font-black" id="qHeader">Задание</div>
+                            
+                            <!-- Question Text -->
+                            <div id="qText" class="my-4 text-white font-semibold leading-relaxed">Какой-то вопрос?</div>
+                            
+                            <!-- Question Answer Form -->
+                            <div id="qContent" class="flex-1 flex flex-col justify-center items-center py-2">
+                                <!-- Dynamic components based on task type -->
+                            </div>
+
+                            <!-- Submit / Action Button -->
+                            <button id="qSubmitBtn" class="mt-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-lg text-sm transition tracking-wider uppercase">
+                                Ответить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Footer -->
+            <footer class="mt-4 border-t border-slate-800 pt-4 flex justify-between text-xs text-slate-500 items-center">
+                <span>Разрешение рендеринга: 800x450 (Масштабируется под Genially)</span>
+                <span class="font-bold text-slate-400">Автор: Гальмиз Мария Александровна</span>
+            </footer>
+        </section>
+    </main>
+
+    <!-- Dialog / Modal for Copy Genially -->
+    <div id="codeModal" class="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl max-w-2xl w-full p-6 space-y-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <span class="text-indigo-400">🚀</span> Код для вставки в Genially / HTML
+            </h3>
+            <p class="text-sm text-slate-400">
+                Скопируйте этот HTML iframe-код и вставьте его в Genially через инструмент <strong>Вставить (Embed) -> Другое (Other)</strong>. Игра будет работать напрямую с вашими настройками и вопросами!
+            </p>
+            <textarea id="geniallyCodeArea" readonly class="w-full h-48 bg-slate-950 text-emerald-400 font-mono text-xs p-3 rounded-lg border border-slate-800 focus:outline-none"></textarea>
+            <div class="flex justify-end space-x-3">
+                <button onclick="document.getElementById('codeModal').classList.add('hidden')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                    Закрыть
+                </button>
+                <button onclick="copyToClipboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition">
+                    Скопировать код
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-xl flex items-center space-x-2 transition-all transform translate-y-20 opacity-0 z-50">
+        <span id="toastIcon">✅</span>
+        <span id="toastText">Готово!</span>
+    </div>
+
+    <!-- MAIN GAME CONFIG AND ENGINE JS -->
+    <script>
+        // Core game settings & defaults
+        let config = {
+            lang: 'ru',
+            fontFamily: 'Inter',
+            titleFontSize: 32,
+            questionFontSize: 22,
+            answerFontSize: 18,
+            crosshairSize: 50,
+            spawnInterval: 3,
+            duckSpeed: 3,
+            totalDucks: 10,
+            livesCount: 3,
+            lifeEmoji: '❤️',
+            questionTimer: 20,
+            gameTitleText: 'DUCK HUNT',
+            assets: {
+                bg: '',      // base64 background
+                duck: '',    // base64 duck sprite
+                helper: '',  // base64 puppy
+                shotSound: '' // base64 shot sound
+            },
+            tasks: [
+                {
+                    id: 1,
+                    type: 'input',
+                    question: 'Столица Франции?',
+                    correct: 'Париж'
+                },
+                {
+                    id: 2,
+                    type: 'choice',
+                    question: 'Какая планета третья от Солнца?',
+                    options: ['Венера', 'Марс', 'Земля', 'Юпитер'],
+                    correct: 2
+                },
+                {
+                    id: 3,
+                    type: 'oral',
+                    question: 'Объясните закон всемирного тяготения своими словами.',
+                    correct: 'Все тела притягиваются друг к другу с силой, зависящей от их массы и расстояния.'
+                },
+                {
+                    id: 4,
+                    type: 'order',
+                    question: 'Расположите месяцы по порядку, начиная с января:',
+                    items: ['Январь', 'Февраль', 'Март', 'Апрель']
+                }
+            ]
+        };
+
+        // Translations helper
+        const t = {
+            ru: {
+                start: 'НАЧАТЬ ИГРУ',
+                round: 'РАУНД',
+                score: 'ОЧКИ',
+                gameOver: 'ИГРА ОКОНЧЕНА',
+                victory: 'ПОБЕДА!',
+                correctBtn: 'Я ответил верно',
+                incorrectBtn: 'Я ошибся',
+                showAnswer: 'Показать ответ',
+                answer: 'Ваш ответ...',
+                submit: 'Ответить',
+                next: 'Продолжить',
+                timeOut: 'Время вышло!',
+                emptyTasks: 'Добавьте вопросы в редакторе!'
+            },
+            en: {
+                start: 'START GAME',
+                round: 'ROUND',
+                score: 'SCORE',
+                gameOver: 'GAME OVER',
+                victory: 'YOU WIN!',
+                correctBtn: 'I answered correctly',
+                incorrectBtn: 'I made a mistake',
+                showAnswer: 'Show Answer',
+                answer: 'Your answer...',
+                submit: 'Submit',
+                next: 'Continue',
+                timeOut: 'Time is up!',
+                emptyTasks: 'Please add questions in the editor!'
+            },
+            uz: {
+                start: 'O\'YINNI BOSHLASH',
+                round: 'RAUND',
+                score: 'OCHKO',
+                gameOver: 'O\'YIN TUGADI',
+                victory: 'G\'ALABA!',
+                correctBtn: 'To\'g\'ri javob berdim',
+                incorrectBtn: 'Xato qildim',
+                showAnswer: 'Javobni ko\'rsatish',
+                answer: 'Javobingiz...',
+                submit: 'Yuborish',
+                next: 'Davom etish',
+                timeOut: 'Vaqt tugadi!',
+                emptyTasks: 'Tahrirlovchida savollar qo\'shing!'
+            },
+            kz: {
+                start: 'ОЙЫНДЫ БАСТАУ',
+                round: 'РАУНД',
+                score: 'ҰПАЙ',
+                gameOver: 'ОЙЫН АЯҚТАЛДЫ',
+                victory: 'ЖЕҢІС!',
+                correctBtn: 'Дұрыс жауап бердім',
+                incorrectBtn: 'Қателестім',
+                showAnswer: 'Жауапты көрсету',
+                answer: 'Жауабыңыз...',
+                submit: 'Жауап беру',
+                next: 'Жалғастыру',
+                timeOut: 'Уақыт бітті!',
+                emptyTasks: 'Сұрақтар қосыңыз!'
+            }
+        };
+
+        // Dynamic rendering of tasks list in the Editor Panel
+        function renderTasksList() {
+            const container = document.getElementById('tasksList');
+            container.innerHTML = '';
+            
+            config.tasks.forEach((task, index) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-800/80 p-4 rounded-lg border border-slate-700 space-y-3 relative group";
+                
+                let inputsHTML = '';
+                
+                if (task.type === 'input') {
+                    inputsHTML = `
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Правильный ответ</label>
+                            <input type="text" oninput="editTaskValue(${task.id}, 'correct', this.value)" class="w-full bg-slate-900 border border-slate-750 rounded p-1.5 text-xs text-white" value="${task.correct || ''}">
+                        </div>
+                    `;
+                } else if (task.type === 'choice') {
+                    inputsHTML = `
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-semibold text-slate-400">Варианты ответа (первый - правильный по умолчанию, либо выберите индекс)</label>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                ${[0, 1, 2, 3].map(i => `
+                                    <div class="flex items-center space-x-1">
+                                        <input type="radio" name="correctChoice_${task.id}" ${task.correct === i ? 'checked' : ''} onchange="editTaskValue(${task.id}, 'correct', ${i})" class="accent-indigo-500">
+                                        <input type="text" placeholder="Вариант ${i+1}" oninput="editChoiceOption(${task.id}, ${i}, this.value)" class="w-full bg-slate-900 border border-slate-750 rounded p-1 text-[11px] text-white" value="${task.options && task.options[i] ? task.options[i] : ''}">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (task.type === 'oral') {
+                    inputsHTML = `
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Ответ (для самопроверки ученика)</label>
+                            <textarea oninput="editTaskValue(${task.id}, 'correct', this.value)" class="w-full bg-slate-900 border border-slate-750 rounded p-1.5 text-xs text-white h-12" placeholder="Что должен ответить ученик...">${task.correct || ''}</textarea>
+                        </div>
+                    `;
+                } else if (task.type === 'order') {
+                    const itemsStr = task.items ? task.items.join(', ') : '';
+                    inputsHTML = `
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Элементы по порядку (через запятую)</label>
+                            <input type="text" oninput="editOrderItems(${task.id}, this.value)" class="w-full bg-slate-900 border border-slate-750 rounded p-1.5 text-xs text-white" value="${itemsStr}" placeholder="Пункт 1, Пункт 2, Пункт 3">
+                        </div>
+                    `;
+                }
+
+                item.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="bg-indigo-900/80 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-bold uppercase">${index + 1}. ${getTaskTypeName(task.type)}</span>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="removeTask(${task.id})" class="text-red-400 hover:text-red-300 text-xs p-1" title="Удалить">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-slate-400 mb-1">Вопрос</label>
+                        <input type="text" oninput="editTaskValue(${task.id}, 'question', this.value)" class="w-full bg-slate-900 border border-slate-750 rounded p-1.5 text-xs text-white" value="${task.question || ''}">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Тип задания</label>
+                            <select onchange="changeTaskType(${task.id}, this.value)" class="w-full bg-slate-900 border border-slate-750 rounded p-1 text-xs text-white">
+                                <option value="input" ${task.type === 'input' ? 'selected' : ''}>Ввод ответа</option>
+                                <option value="choice" ${task.type === 'choice' ? 'selected' : ''}>Множественный выбор</option>
+                                <option value="oral" ${task.type === 'oral' ? 'selected' : ''}>Устный ответ</option>
+                                <option value="order" ${task.type === 'order' ? 'selected' : ''}>Порядок</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-750">
+                        ${inputsHTML}
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        function getTaskTypeName(type) {
+            switch(type) {
+                case 'input': return 'Ввод ответа';
+                case 'choice': return 'Множественный выбор';
+                case 'oral': return 'Устный ответ';
+                case 'order': return 'Порядок';
+                default: return 'Задание';
+            }
+        }
+
+        function addNewTask() {
+            const nextId = config.tasks.length > 0 ? Math.max(...config.tasks.map(t => t.id)) + 1 : 1;
+            config.tasks.push({
+                id: nextId,
+                type: 'input',
+                question: 'Новый вопрос?',
+                correct: 'Ответ'
+            });
+            renderTasksList();
+            showToast("Задание добавлено", "✨");
+            resetPreviewGame();
+        }
+
+        function removeTask(id) {
+            config.tasks = config.tasks.filter(t => t.id !== id);
+            renderTasksList();
+            showToast("Задание удалено", "🗑️");
+            resetPreviewGame();
+        }
+
+        function changeTaskType(id, type) {
+            const task = config.tasks.find(t => t.id === id);
+            if (task) {
+                task.type = type;
+                if (type === 'input') {
+                    task.correct = 'Ответ';
+                    delete task.options;
+                    delete task.items;
+                } else if (type === 'choice') {
+                    task.options = ['Вариант A', 'Вариант B', 'Вариант C', 'Вариант D'];
+                    task.correct = 0;
+                    delete task.items;
+                } else if (type === 'oral') {
+                    task.correct = 'Правильное пояснение';
+                    delete task.options;
+                    delete task.items;
+                } else if (type === 'order') {
+                    task.items = ['Первый', 'Второй', 'Третий'];
+                    delete task.options;
+                    delete task.correct;
+                }
+                renderTasksList();
+                resetPreviewGame();
+            }
+        }
+
+        function editTaskValue(id, key, value) {
+            const task = config.tasks.find(t => t.id === id);
+            if (task) {
+                task[key] = value;
+                syncPreviewConfigs();
+            }
+        }
+
+        function editChoiceOption(id, index, value) {
+            const task = config.tasks.find(t => t.id === id);
+            if (task && task.options) {
+                task.options[index] = value;
+                syncPreviewConfigs();
+            }
+        }
+
+        function editOrderItems(id, value) {
+            const task = config.tasks.find(t => t.id === id);
+            if (task) {
+                task.items = value.split(',').map(item => item.trim());
+                syncPreviewConfigs();
+            }
+        }
+
+        // Live editor synchronizer
+        function updateConfig(key, value) {
+            let parsed = value;
+            if (!isNaN(value) && value.trim() !== '') {
+                parsed = Number(value);
+            }
+            config[key] = parsed;
+
+            // Update UI elements values
+            if (key === 'crosshairSize') document.getElementById('crosshairSizeVal').innerText = value + 'px';
+            if (key === 'spawnInterval') document.getElementById('spawnIntervalVal').innerText = value + 'с';
+            if (key === 'duckSpeed') document.getElementById('duckSpeedVal').innerText = value;
+
+            syncPreviewConfigs();
+        }
+
+        // Load project from file
+        function loadProject(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const loaded = JSON.parse(e.target.result);
+                    config = { ...config, ...loaded };
+                    
+                    document.getElementById('langSelect').value = config.lang || 'ru';
+                    document.getElementById('fontSelect').value = config.fontFamily || 'Inter';
+                    document.getElementById('titleFontSize').value = config.titleFontSize || 32;
+                    document.getElementById('questionFontSize').value = config.questionFontSize || 22;
+                    document.getElementById('answerFontSize').value = config.answerFontSize || 18;
+                    document.getElementById('crosshairSize').value = config.crosshairSize || 50;
+                    document.getElementById('crosshairSizeVal').innerText = (config.crosshairSize || 50) + 'px';
+                    document.getElementById('spawnInterval').value = config.spawnInterval || 3;
+                    document.getElementById('spawnIntervalVal').innerText = (config.spawnInterval || 3) + 'с';
+                    document.getElementById('duckSpeed').value = config.duckSpeed || 3;
+                    document.getElementById('duckSpeedVal').innerText = config.duckSpeed || 3;
+                    document.getElementById('totalDucks').value = config.totalDucks || 10;
+                    document.getElementById('livesCount').value = config.livesCount || 3;
+                    document.getElementById('lifeEmoji').value = config.lifeEmoji || '❤️';
+                    document.getElementById('questionTimer').value = config.questionTimer !== undefined ? config.questionTimer : 20;
+                    document.getElementById('gameTitleText').value = config.gameTitleText || 'DUCK HUNT';
+
+                    updateAssetUploadButtons();
+
+                    renderTasksList();
+                    resetPreviewGame();
+                    showToast("Проект загружен!", "📂");
+                } catch (err) {
+                    alert("Ошибка чтения файла проекта!");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateAssetUploadButtons() {
+            ['bg', 'duck', 'helper'].forEach(asset => {
+                const btn = document.getElementById(`reset${asset.charAt(0).toUpperCase() + asset.slice(1)}Btn`);
+                if (config.assets[asset]) {
+                    btn.classList.remove('hidden');
+                } else {
+                    btn.classList.add('hidden');
+                }
+            });
+            const audioBtn = document.getElementById('resetAudioBtn');
+            if (config.assets.shotSound) {
+                audioBtn.classList.remove('hidden');
+            } else {
+                audioBtn.classList.add('hidden');
+            }
+        }
+
+        function saveProject() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "duck_hunt_project.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Проект сохранен на ПК", "💾");
+        }
+
+        function handleAssetUpload(event, key) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                config.assets[key] = e.target.result;
+                document.getElementById(`reset${key.charAt(0).toUpperCase() + key.slice(1)}Btn`).classList.remove('hidden');
+                showToast("Изображение загружено", "🖼️");
+                resetPreviewGame();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetAsset(key) {
+            config.assets[key] = '';
+            document.getElementById(`reset${key.charAt(0).toUpperCase() + key.slice(1)}Btn`).classList.add('hidden');
+            document.getElementById(`${key}Upload`).value = '';
+            showToast("Изображение сброшено", "🔄");
+            resetPreviewGame();
+        }
+
+        function handleAudioUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                config.assets.shotSound = e.target.result;
+                document.getElementById('resetAudioBtn').classList.remove('hidden');
+                showToast("Звук выстрела загружен", "🎵");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetAudio() {
+            config.assets.shotSound = '';
+            document.getElementById('resetAudioBtn').classList.add('hidden');
+            document.getElementById('shotSoundUpload').value = '';
+            showToast("Звук сброшен", "🔄");
+        }
+
+        function showToast(message, icon = "✅") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').innerText = message;
+            document.getElementById('toastIcon').innerText = icon;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Generate entire self-contained playable HTML bundle
+        function buildStandaloneHTML() {
+            return `<!DOCTYPE html>
+<html lang="${config.lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${config.gameTitleText} - Play</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Play:wght@400;700&family=Inter:wght@400;600;800&family=Comfortaa:wght@400;700&family=Montserrat:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            display: flex; justify-content: center; align-items: center;
+            font-family: ${config.fontFamily === 'Inter' ? '"Inter", sans-serif' : config.fontFamily}, sans-serif;
+        }
+        #gameWrapper {
+            width: 100%; max-width: 800px;
+            aspect-ratio: 16/9;
+            position: relative;
+            background-color: #7dd3fc;
+            overflow: hidden;
+            user-select: none;
+            border: 4px solid #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        canvas {
+            width: 100%; height: 100%;
+            display: block;
+            cursor: none;
+        }
+        #qOverlay {
+            position: absolute; inset: 0;
+            background-color: rgba(0,0,0,0.85);
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px; z-index: 100;
+        }
+        #qCard {
+            background-color: #0f172a;
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 24px; width: 100%; max-width: 550px;
+            text-align: center; display: flex; flex-direction: column;
+            justify-content: space-between; min-h: 300px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            color: white;
+        }
+        #timerBar {
+            width: 100%; bg-color: #1e293b; height: 8px; border-radius: 9999px; overflow: hidden; margin-bottom: 12px;
+            background: #1e293b;
+        }
+        #timerProgress {
+            background: #f59e0b; height: 100%; transition: width 0.1s linear; width: 100%;
+        }
+        #qHeader {
+            font-size: 12px; color: #f59e0b; text-transform: uppercase; font-weight: 900; letter-spacing: 0.1em;
+        }
+        #qText {
+            margin: 16px 0; font-weight: 600; line-height: 1.5;
+            font-size: ${config.questionFontSize}px;
+        }
+        #qContent {
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px 0;
+        }
+        /* Buttons and choice inputs styled */
+        .option-btn {
+            background: #1e293b; border: 1px solid #475569; color: white; padding: 10px 16px; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s; width: 100%; text-align: left; margin: 4px 0;
+            font-size: ${config.answerFontSize}px;
+        }
+        .option-btn:hover { background: #334155; border-color: #f59e0b; }
+        .option-btn.selected { background: #f59e0b; color: #0f172a; border-color: #d97706; font-weight: bold; }
+        .text-input {
+            width: 100%; background: #1e293b; border: 1px solid #475569; color: white; padding: 10px 14px; border-radius: 6px;
+            font-size: ${config.answerFontSize}px; outline: none; margin-bottom: 12px; text-align: center;
+        }
+        .text-input:focus { border-color: #f59e0b; }
+        .action-btn {
+            background: #f59e0b; color: #0f172a; font-weight: bold; padding: 10px 24px; border-radius: 6px;
+            cursor: pointer; border: none; text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s; font-size: 14px;
+        }
+        .action-btn:hover { background: #fbbf24; }
+        .oral-answer-box {
+            font-size: ${config.answerFontSize}px; color: #a5b4fc; background: #1e1b4b; padding: 10px; border-radius: 6px; margin: 8px 0; border: 1px dashed #6366f1; width: 100%;
+        }
+        .oral-btn-group { display: flex; gap: 8px; width: 100%; }
+        .oral-yes { background: #10b981; color: white; }
+        .oral-yes:hover { background: #34d399; }
+        .oral-no { background: #ef4444; color: white; }
+        .oral-no:hover { background: #f87171; }
+        
+        /* Drag Order styles */
+        .order-container { display: flex; flex-direction: column; gap: 6px; width: 100%; max-height: 180px; overflow-y: auto; padding: 4px; }
+        .order-item {
+            background: #1e293b; border: 1px solid #475569; padding: 8px 12px; border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between; font-size: ${config.answerFontSize}px;
+        }
+        .order-item:hover { border-color: #6366f1; }
+        .author-watermark {
+            position: absolute; bottom: 8px; right: 12px; font-size: 10px; color: rgba(255,255,255,0.4); pointer-events: none; z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameWrapper">
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+        
+        <!-- Question Overlay -->
+        <div id="qOverlay" style="display:none;">
+            <div id="qCard">
+                <div id="timerBar"><div id="timerProgress"></div></div>
+                <div id="qHeader">Задание</div>
+                <div id="qText">Вопрос</div>
+                <div id="qContent"></div>
+                <button id="qSubmitBtn" class="action-btn">Ответить</button>
+            </div>
+        </div>
+        <div class="author-watermark">Автор: Гальмиз Мария Александровна</div>
+    </div>
+
+    <script>
+        const config = ${JSON.stringify(config)};
+        const t = ${JSON.stringify(t)};
+        
+        // PASTE ENTIRE CANVAS GAME ENGINE RUNTIME HERE
+        ${gameEngineJSCode}
+    <\/script>
+</body>
+</html>`;
+        }
+
+        // Show Dialog Modal to copy code
+        function copyGeniallyCode() {
+            const htmlBundle = buildStandaloneHTML();
+            // Wrap in srcdoc iframe
+            const escapedHtml = htmlBundle
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            const iframeCode = `<iframe srcdoc="${escapedHtml}" width="100%" height="450" style="border:0; border-radius:8px; overflow:hidden;" allow="autoplay" scrolling="no"></iframe>`;
+            
+            document.getElementById('geniallyCodeArea').value = iframeCode;
+            document.getElementById('codeModal').classList.remove('hidden');
+        }
+
+        function copyToClipboard() {
+            const textarea = document.getElementById('geniallyCodeArea');
+            textarea.select();
+            document.execCommand('copy');
+            showToast("Код скопирован в буфер", "📋");
+            document.getElementById('codeModal').classList.add('hidden');
+        }
+
+        // Trigger file download
+        function downloadGameHTML() {
+            const htmlBundle = buildStandaloneHTML();
+            const blob = new Blob([htmlBundle], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "duck_hunt_game.html";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showToast("Игра скачана как HTML файл!", "🔥");
+        }
+    </script>
+
+    <!-- EMBED THE LIVE RUNTIME CONTROLLER AND GAME LOGIC -->
+    <script id="game-runtime">
+        // Shared JavaScript Core Engine injected both into Editor Preview and Genially export
+        const gameEngineJSCode = `
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            let score = 0;
+            let round = 1;
+            let lives = config.livesCount;
+            let currentTaskIndex = 0;
+            let ammo = 3;
+            let gameState = 'START'; 
+            let ducks = [];
+            let activeTask = null;
+            let timerInterval = null;
+            let timeLeft = 0;
+            let selectedOption = null;
+            let orderItems = [];
+
+            let dogAnim = {
+                x: 350,
+                y: 450,
+                targetY: 450,
+                state: 'hidden', 
+                timer: 0,
+                success: true
+            };
+
+            const defaultBgGrassColor = '#4ade80';
+            const defaultBgSkyColor = '#7dd3fc';
+
+            const fallbackDuck = new Image();
+            fallbackDuck.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M12 32 C12 20, 24 16, 36 20 C42 16, 52 16, 56 24 C60 30, 56 40, 44 42 C38 46, 24 46, 12 32 Z" fill="%23b45309"/><circle cx="44" cy="24" r="3" fill="black"/><path d="M52 24 L60 26 L54 30 Z" fill="%23f59e0b"/><path d="M20 34 C20 34, 16 46, 24 44 C28 42, 28 34, 28 34 Z" fill="%23d97706"/><path d="M30 34 C30 34, 28 48, 36 44 C40 40, 36 34, 36 34 Z" fill="%23d97706"/></svg>';
+
+            const fallbackHelper = new Image();
+            fallbackHelper.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M20 48 C16 48, 12 36, 16 28 C20 20, 32 16, 44 24 C52 30, 52 42, 44 48 Z" fill="%2378350f"/><path d="M16 24 C12 24, 8 32, 12 38 Z" fill="%23451a03"/><path d="M44 24 C48 24, 52 32, 48 38 Z" fill="%23451a03"/><circle cx="28" cy="30" r="3" fill="white"/><circle cx="28" cy="30" r="1.5" fill="black"/><circle cx="40" cy="30" r="3" fill="white"/><circle cx="40" cy="30" r="1.5" fill="black"/><path d="M32 36 L36 36 L34 39 Z" fill="%23ef4444"/><path d="M24 46 C24 50, 40 50, 40 46 Z" fill="%231e293b"/></svg>';
+
+            let customBgImg = null;
+            let customDuckImg = null;
+            let customHelperImg = null;
+
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            function playGunshotSound() {
+                if (config.assets.shotSound) {
+                    let audio = new Audio(config.assets.shotSound);
+                    audio.play().catch(e => console.log('Audio error'));
+                    return;
+                }
+                try {
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                    const bufferSize = audioCtx.sampleRate * 0.4;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    const filter = audioCtx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.value = 1000;
+                    const gain = audioCtx.createGain();
+                    gain.gain.setValueAtTime(1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    const osc = audioCtx.createOscillator();
+                    const oscGain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.15);
+                    oscGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                    oscGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.connect(oscGain);
+                    oscGain.connect(audioCtx.destination);
+                    
+                    noise.start();
+                    osc.start();
+                    noise.stop(audioCtx.currentTime + 0.4);
+                    osc.stop(audioCtx.currentTime + 0.2);
+                } catch(e){}
+            }
+
+            function playWinSound() {
+                try {
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(261.6, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(329.6, audioCtx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(392.0, audioCtx.currentTime + 0.2);
+                    osc.frequency.setValueAtTime(523.3, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.5);
+                } catch(e){}
+            }
+
+            function playFailSound() {
+                try {
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.5);
+                } catch(e){}
+            }
+
+            let mouseX = 400;
+            let mouseY = 225;
+            let isMouseInCanvas = false;
+
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+                isMouseInCanvas = true;
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isMouseInCanvas = false;
+            });
+
+            function loadCustomImages() {
+                if (config.assets.bg) {
+                    customBgImg = new Image();
+                    customBgImg.src = config.assets.bg;
+                } else {
+                    customBgImg = null;
+                }
+                if (config.assets.duck) {
+                    customDuckImg = new Image();
+                    customDuckImg.src = config.assets.duck;
+                } else {
+                    customDuckImg = null;
+                }
+                if (config.assets.helper) {
+                    customHelperImg = new Image();
+                    customHelperImg.src = config.assets.helper;
+                } else {
+                    customHelperImg = null;
+                }
+            }
+
+            function initGame() {
+                score = 0;
+                round = 1;
+                lives = config.livesCount;
+                currentTaskIndex = 0;
+                ammo = 3;
+                gameState = 'START';
+                ducks = [];
+                dogAnim = { x: 350, y: 450, targetY: 450, state: 'hidden', timer: 0, success: true };
+                loadCustomImages();
+                closeQuestionOverlay();
+            }
+
+            function spawnDuck() {
+                const goingRight = Math.random() > 0.5;
+                ducks.push({
+                    x: goingRight ? -50 : 850,
+                    y: 100 + Math.random() * 120,
+                    vx: (goingRight ? 1 : -1) * (config.duckSpeed || 3),
+                    vy: - (1 + Math.random() * 2),
+                    width: 60,
+                    height: 60,
+                    flapTimer: 0,
+                    isShot: false,
+                    fallSpeed: 0,
+                    shotTimer: 0,
+                    isActive: true,
+                    escape: false,
+                    taskAssigned: getNextTask()
+                });
+            }
+
+            function getNextTask() {
+                if (!config.tasks || config.tasks.length === 0) return null;
+                const task = config.tasks[currentTaskIndex];
+                currentTaskIndex = (currentTaskIndex + 1) % config.tasks.length;
+                return task;
+            }
+
+            canvas.addEventListener('click', (e) => {
+                if (gameState === 'START') {
+                    const textWidth = ctx.measureText(t[config.lang].start).width;
+                    if (mouseX > 400 - 80 && mouseX < 400 + 80 && mouseY > 270 && mouseY < 320) {
+                        playGunshotSound();
+                        startGame();
+                    }
+                    return;
+                }
+
+                if (gameState !== 'PLAYING') return;
+
+                playGunshotSound();
+
+                if (ammo <= 0) return;
+                ammo--;
+
+                let hit = false;
+                for (let i = 0; i < ducks.length; i++) {
+                    let d = ducks[i];
+                    if (d.isActive && !d.isShot) {
+                        const dist = Math.hypot(d.x + d.width/2 - mouseX, d.y + d.height/2 - mouseY);
+                        if (dist < (config.crosshairSize / 2 + d.width / 2)) {
+                            d.isShot = true;
+                            d.vx = 0;
+                            d.vy = 0;
+                            d.shotTimer = 30; 
+                            hit = true;
+                            activeTask = d.taskAssigned;
+                            gameState = 'HIT';
+                            break;
+                        }
+                    }
+                }
+
+                if (!hit && ammo === 0) {
+                    ducks.forEach(d => {
+                        if (!d.isShot) {
+                            d.vy = -6;
+                            d.vx = 0;
+                            d.escape = true;
+                        }
+                    });
+                    setTimeout(() => {
+                        handleMiss();
+                    }, 1200);
+                }
+            });
+
+            function startGame() {
+                gameState = 'DOG_LAUNCH';
+                dogAnim.state = 'rising';
+                dogAnim.x = 350;
+                dogAnim.y = 450;
+                dogAnim.targetY = 280;
+                dogAnim.timer = 0;
+            }
+
+            function handleMiss() {
+                lives--;
+                ammo = 3;
+                ducks = [];
+                if (lives <= 0) {
+                    gameState = 'GAMEOVER';
+                    playFailSound();
+                } else {
+                    gameState = 'DOG_SHOW';
+                    dogAnim.success = false;
+                    dogAnim.state = 'rising';
+                    dogAnim.x = 370;
+                    dogAnim.y = 450;
+                    dogAnim.targetY = 300;
+                    dogAnim.timer = 0;
+                }
+            }
+
+            let lastTime = 0;
+            let spawnTimer = 0;
+            let roundDuckCounter = 0;
+
+            function update(time) {
+                ctx.clearRect(0,0, canvas.width, canvas.height);
+                
+                if (customBgImg && customBgImg.complete) {
+                    ctx.drawImage(customBgImg, 0, 0, canvas.width, canvas.height);
+                } else {
+                    ctx.fillStyle = defaultBgSkyColor;
+                    ctx.fillRect(0, 0, canvas.width, 270);
+                    ctx.fillStyle = '#065f46';
+                    ctx.fillRect(0, 270, canvas.width, 180);
+                }
+
+                if (gameState === 'PLAYING') {
+                    spawnTimer += 0.016; 
+                    if (spawnTimer >= (config.spawnInterval || 3) && roundDuckCounter < (config.totalDucks || 10)) {
+                        spawnDuck();
+                        roundDuckCounter++;
+                        spawnTimer = 0;
+                    }
+
+                    ducks.forEach(d => {
+                        if (d.isActive) {
+                            d.flapTimer += 0.2;
+                            
+                            if (!d.isShot) {
+                                d.x += d.vx;
+                                d.y += d.vy;
+
+                                if (d.x < -d.width && d.vx < 0) d.vx = -d.vx;
+                                if (d.x > canvas.width && d.vx > 0) d.vx = -d.vx;
+                                if (d.y < 0) {
+                                    d.isActive = false; 
+                                    handleMiss();
+                                }
+                            } else {
+                                d.shotTimer--;
+                                if (d.shotTimer <= 0) {
+                                    d.y += 6; 
+                                    if (d.y > 330) {
+                                        d.isActive = false;
+                                        showQuestionOverlay(d.taskAssigned);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                ducks.forEach(d => {
+                    if (d.isActive) {
+                        ctx.save();
+                        if (d.vx < 0) {
+                            ctx.translate(d.x + d.width, d.y);
+                            ctx.scale(-1, 1);
+                            drawDuckAsset(0, 0, d.width, d.height, d.isShot, d.flapTimer);
+                        } else {
+                            ctx.translate(d.x, d.y);
+                            drawDuckAsset(0, 0, d.width, d.height, d.isShot, d.flapTimer);
+                        }
+                        ctx.restore();
+                    }
+                });
+
+                updateDogAnimation();
+                drawForegroundGrass();
+                drawGameUI();
+
+                if (isMouseInCanvas && (gameState === 'PLAYING' || gameState === 'START')) {
+                    drawCrosshair();
+                }
+
+                drawGameScreens();
+                requestAnimationFrame(update);
+            }
+
+            function drawDuckAsset(x, y, w, h, isShot, flapTimer) {
+                if (isShot) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(x + 5, y + 5, w - 10, h - 10);
+                }
+                if (customDuckImg && customDuckImg.complete) {
+                    ctx.drawImage(customDuckImg, x, y, w, h);
+                } else {
+                    ctx.drawImage(fallbackDuck, x, y, w, h);
+                }
+            }
+
+            function drawForegroundGrass() {
+                ctx.fillStyle = '#15803d'; 
+                ctx.fillRect(0, 310, canvas.width, 140);
+                
+                ctx.fillStyle = '#166534';
+                for (let i = 0; i < canvas.width; i += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 320);
+                    ctx.lineTo(i + 10, 290);
+                    ctx.lineTo(i + 20, 320);
+                    ctx.fill();
+                }
+            }
+
+            function updateDogAnimation() {
+                if (gameState === 'DOG_LAUNCH' || gameState === 'DOG_SHOW') {
+                    if (dogAnim.state === 'rising') {
+                        dogAnim.y -= 3;
+                        if (dogAnim.y <= dogAnim.targetY) {
+                            dogAnim.state = 'showing';
+                            dogAnim.timer = 60; 
+                        }
+                    } else if (dogAnim.state === 'showing') {
+                        dogAnim.timer--;
+                        if (dogAnim.timer <= 0) {
+                            dogAnim.state = 'lowering';
+                        }
+                    } else if (dogAnim.state === 'lowering') {
+                        dogAnim.y += 3;
+                        if (dogAnim.y >= 450) {
+                            dogAnim.state = 'hidden';
+                            if (gameState === 'DOG_LAUNCH') {
+                                gameState = 'PLAYING';
+                                ammo = 3;
+                                spawnTimer = 0;
+                                roundDuckCounter = 0;
+                            } else {
+                                gameState = 'PLAYING';
+                            }
+                        }
+                    }
+
+                    if (dogAnim.state !== 'hidden') {
+                        if (customHelperImg && customHelperImg.complete) {
+                            ctx.drawImage(customHelperImg, dogAnim.x, dogAnim.y, 80, 80);
+                        } else {
+                            ctx.drawImage(fallbackHelper, dogAnim.x, dogAnim.y, 80, 80);
+                        }
+                    }
+                }
+            }
+
+            function drawCrosshair() {
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                const size = config.crosshairSize;
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, size / 2, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(mouseX - size/1.5, mouseY);
+                ctx.lineTo(mouseX + size/1.5, mouseY);
+                ctx.moveTo(mouseX, mouseY - size/1.5);
+                ctx.lineTo(mouseX, mouseY + size/1.5);
+                ctx.stroke();
+            }
+
+            function drawGameUI() {
+                ctx.fillStyle = '#27272a';
+                ctx.fillRect(0, 390, canvas.width, 60);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px ' + (config.fontFamily === 'Inter' ? 'sans-serif' : config.fontFamily);
+
+                ctx.fillText(t[config.lang].round + ' : ' + round, 30, 425);
+                ctx.fillText('AMMO:', 160, 425);
+                for (let i = 0; i < 3; i++) {
+                    ctx.fillStyle = i < ammo ? '#f59e0b' : '#4b5563';
+                    ctx.fillRect(230 + (i * 12), 410, 8, 20);
+                }
+
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('DUCKS:', 300, 425);
+                for (let i = 0; i < (config.totalDucks || 10); i++) {
+                    ctx.fillStyle = i < roundDuckCounter ? '#ef4444' : '#4b5563';
+                    ctx.beginPath();
+                    ctx.arc(380 + (i * 18), 420, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(t[config.lang].score + ': ' + score, 600, 425);
+
+                let lifeEmojiStr = '';
+                for(let i=0; i < lives; i++) {
+                    lifeEmojiStr += config.lifeEmoji || '❤️';
+                }
+                ctx.fillText(lifeEmojiStr, 710, 425);
+            }
+
+            function drawGameScreens() {
+                if (gameState === 'START') {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    ctx.fillRect(0, 0, canvas.width, 390);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(config.gameTitleText, 400, 180);
+
+                    ctx.font = '16px ' + config.fontFamily;
+                    ctx.fillStyle = '#fbbf24';
+                    ctx.fillText('Автор: Гальмиз Мария Александровна', 400, 220);
+
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillRect(320, 270, 160, 50);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 14px ' + config.fontFamily;
+                    ctx.fillText(t[config.lang].start, 400, 302);
+                    ctx.textAlign = 'left';
+                } else if (gameState === 'GAMEOVER') {
+                    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                    ctx.fillRect(0, 0, canvas.width, 390);
+
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(t[config.lang].gameOver, 400, 180);
+
+                    ctx.font = '16px ' + config.fontFamily;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillText('Итоговый счет: ' + score, 400, 220);
+                    ctx.textAlign = 'left';
+                } else if (gameState === 'VICTORY') {
+                    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+                    ctx.fillRect(0, 0, canvas.width, 390);
+
+                    ctx.fillStyle = '#10b981';
+                    ctx.font = 'bold ' + config.titleFontSize + 'px ' + config.fontFamily;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(t[config.lang].victory, 400, 180);
+
+                    ctx.font = '18px ' + config.fontFamily;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillText('Побендый счет: ' + score + '!', 400, 220);
+                    ctx.textAlign = 'left';
+                }
+            }
+
+            function showQuestionOverlay(task) {
+                if (!task) {
+                    score += 100;
+                    gameState = 'PLAYING';
+                    ammo = 3;
+                    checkVictoryCondition();
+                    return;
+                }
+
+                gameState = 'QUESTION';
+                activeTask = task;
+                
+                const overlay = document.getElementById('qOverlay');
+                overlay.style.display = 'flex';
+
+                const qText = document.getElementById('qText');
+                qText.innerText = task.question;
+                qText.style.fontSize = config.questionFontSize + 'px';
+
+                const contentDiv = document.getElementById('qContent');
+                contentDiv.innerHTML = '';
+
+                const submitBtn = document.getElementById('qSubmitBtn');
+                submitBtn.innerText = t[config.lang].submit;
+                submitBtn.style.display = 'block';
+                submitBtn.onclick = checkQuestionAnswer;
+
+                selectedOption = null;
+                document.getElementById('qCard').style.fontFamily = config.fontFamily;
+
+                if (task.type === 'input') {
+                    contentDiv.innerHTML = '<input type="text" id="answerField" class="text-input" placeholder="' + t[config.lang].answer + '" autofocus>';
+                } else if (task.type === 'choice') {
+                    const choiceContainer = document.createElement('div');
+                    choiceContainer.className = 'w-full space-y-2';
+                    (task.options || []).forEach((opt, idx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option-btn';
+                        btn.innerText = opt;
+                        btn.onclick = () => {
+                            Array.from(choiceContainer.children).forEach(b => b.classList.remove('selected'));
+                            btn.classList.add('selected');
+                            selectedOption = idx;
+                        };
+                        choiceContainer.appendChild(btn);
+                    });
+                    contentDiv.appendChild(choiceContainer);
+                } else if (task.type === 'oral') {
+                    contentDiv.innerHTML = '<button id="showOralAnswerBtn" class="action-btn mb-2" onclick="revealOralAnswer(\'' + task.correct.replace(/'/g, "\\'") + '\')">' + t[config.lang].showAnswer + '</button><div id="oralAnswerText" class="oral-answer-box" style="display:none;"></div><div id="oralControlGroup" class="oral-btn-group" style="display:none;"><button onclick="handleOralResult(true)" class="action-btn oral-yes w-full">' + t[config.lang].correctBtn + '</button><button onclick="handleOralResult(false)" class="action-btn oral-no w-full">' + t[config.lang].incorrectBtn + '</button></div>';
+                    submitBtn.style.display = 'none';
+                } else if (task.type === 'order') {
+                    orderItems = [...(task.items || [])].sort(() => Math.random() - 0.5);
+                    const orderContainer = document.createElement('div');
+                    orderContainer.className = 'order-container';
+                    renderOrderItems(orderContainer);
+                    contentDiv.appendChild(orderContainer);
+                }
+
+                if (config.questionTimer > 0) {
+                    timeLeft = config.questionTimer;
+                    updateTimerBar();
+                    clearInterval(timerInterval);
+                    timerInterval = setInterval(() => {
+                        timeLeft -= 0.1;
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                            timeOutAnswer();
+                        } else {
+                            updateTimerBar();
+                        }
+                    }, 100);
+                } else {
+                    document.getElementById('timerProgress').style.width = '100%';
+                }
+            }
+
+            function renderOrderItems(container) {
+                container.innerHTML = '';
+                orderItems.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'order-item';
+                    div.innerHTML = '<span>' + item + '</span><div class="flex gap-1"><button onclick="moveOrderItem(' + index + ', -1)" class="text-xs bg-slate-700 p-1 rounded hover:bg-slate-600">▲</button><button onclick="moveOrderItem(' + index + ', 1)" class="text-xs bg-slate-700 p-1 rounded hover:bg-slate-600">▼</button></div>';
+                    container.appendChild(div);
+                });
+            }
+
+            window.moveOrderItem = function(index, dir) {
+                const target = index + dir;
+                if (target >= 0 && target < orderItems.length) {
+                    const temp = orderItems[index];
+                    orderItems[index] = orderItems[target];
+                    orderItems[target] = temp;
+                    const container = document.querySelector('.order-container');
+                    if (container) renderOrderItems(container);
+                }
+            };
+
+            window.revealOralAnswer = function(correctAnswer) {
+                document.getElementById('showOralAnswerBtn').style.display = 'none';
+                const textDiv = document.getElementById('oralAnswerText');
+                textDiv.style.display = 'block';
+                textDiv.innerText = correctAnswer;
+                document.getElementById('oralControlGroup').style.display = 'flex';
+            };
+
+            window.handleOralResult = function(isCorrect) {
+                clearInterval(timerInterval);
+                if (isCorrect) {
+                    answerCorrect();
+                } else {
+                    answerIncorrect();
+                }
+            };
+
+            function updateTimerBar() {
+                const pct = (timeLeft / config.questionTimer) * 100;
+                document.getElementById('timerProgress').style.width = pct + '%';
+            }
+
+            function timeOutAnswer() {
+                answerIncorrect();
+            }
+
+            function checkQuestionAnswer() {
+                clearInterval(timerInterval);
+                if (activeTask.type === 'input') {
+                    const val = document.getElementById('answerField').value.trim();
+                    if (val.toLowerCase() === activeTask.correct.toLowerCase()) {
+                        answerCorrect();
+                    } else {
+                        answerIncorrect();
+                    }
+                } else if (activeTask.type === 'choice') {
+                    if (selectedOption === activeTask.correct) {
+                        answerCorrect();
+                    } else {
+                        answerIncorrect();
+                    }
+                } else if (activeTask.type === 'order') {
+                    const isSorted = orderItems.every((val, i) => val === activeTask.items[i]);
+                    if (isSorted) {
+                        answerCorrect();
+                    } else {
+                        answerIncorrect();
+                    }
+                }
+            }
+
+            function answerCorrect() {
+                score += 100;
+                playWinSound();
+                ducks = ducks.filter(d => !d.isShot);
+                closeQuestionOverlay();
+                gameState = 'DOG_SHOW';
+                dogAnim.success = true;
+                dogAnim.state = 'rising';
+                dogAnim.x = 350;
+                dogAnim.y = 450;
+                dogAnim.targetY = 280;
+                dogAnim.timer = 60;
+                ammo = 3;
+                checkVictoryCondition();
+            }
+
+            function answerIncorrect() {
+                playFailSound();
+                lives--;
+                ducks.forEach(d => {
+                    if (d.isShot) {
+                        d.isShot = false;
+                        d.vx = (Math.random() > 0.5 ? 1 : -1) * (config.duckSpeed || 3);
+                        d.vy = - (1 + Math.random() * 2);
+                    }
+                });
+                closeQuestionOverlay();
+                if (lives <= 0) {
+                    gameState = 'GAMEOVER';
+                } else {
+                    gameState = 'PLAYING';
+                    ammo = 3;
+                }
+            }
+
+            function closeQuestionOverlay() {
+                document.getElementById('qOverlay').style.display = 'none';
+            }
+
+            function checkVictoryCondition() {
+                if (roundDuckCounter >= (config.totalDucks || 10) && ducks.length === 0) {
+                    gameState = 'VICTORY';
+                }
+            }
+
+            initGame();
+            requestAnimationFrame(update);
+        `;
+
+        // Inject engine for local live-preview
+        function syncPreviewConfigs() {
+            if (window.loadCustomImages) {
+                window.loadCustomImages();
+            }
+        }
+
+        function resetPreviewGame() {
+            if (window.initGame) {
+                window.initGame();
+            }
+        }
+
+        // Execute JS locally for Preview
+        const scriptElement = document.createElement('script');
+        scriptElement.innerHTML = `
+            const config = window.config || {};
+            const t = window.t || {};
+        ` + gameEngineJSCode;
+        document.body.appendChild(scriptElement);
+
+        // Initial tasks rendering
+        renderTasksList();
+        syncPreviewConfigs();
+    </script>
+</body>
+</html>
