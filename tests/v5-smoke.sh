@@ -13,6 +13,11 @@ grep -q 'data-preview="task"' index.html
 grep -q 'id="v5TaskBg"' index.html
 grep -q 'id="v5HelperShape"' index.html
 grep -q 'id="v5HudBg"' index.html
+grep -q 'id="v6HelperWidth"' index.html
+grep -q 'id="v6CheckBg"' index.html
+grep -q 'id="v6CrosshairSize"' index.html
+grep -q 'particle-lightning' v5.css
+grep -q 'config.crosshair' enhancements.js
 grep -q 'title="Меткий ответ"' enhancements.js
 if grep -Eq 'location\.reload|iframe\.srcdoc[[:space:]]*=' enhancements.js; then
   echo 'Forbidden preview/export reload pattern found'
