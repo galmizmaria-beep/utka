@@ -1,0 +1,18 @@
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const hideLayers = () => { $('#titleScreen').hidden=true; $('#taskModal').hidden=true; $('#resultScreen').hidden=true; $('#roundIntroScreen').hidden=true; $('#helper').className='helper'; };
+  const activate = key => $$('[data-preview]').forEach(b => b.classList.toggle('active', b.dataset.preview===key));
+  const showRound = (auto=false) => {
+    hideLayers(); const card=$('#roundIntroCard'), n=($('#roundValue').textContent||'1').split('/')[0].trim();
+    card.textContent=($('#roundIntroText').value||'Раунд {n}').replace('{n}',n); card.style.background=$('#roundIntroBg').value; card.style.borderColor=$('#roundIntroFrame').value; card.className=`round-intro-card anim-${$('#roundIntroAnimation').value}`; $('#roundIntroScreen').hidden=false;
+    if(auto)setTimeout(()=>$('#roundIntroScreen').hidden=true,Math.max(.5,+$('#roundIntroDuration').value||2)*1000);
+  };
+  const showTask = () => { hideLayers(); $('#taskTypeLabel').textContent='ПРИМЕР ЗАДАНИЯ'; $('#modalQuestion').innerHTML='Чему равно <span class="math-inline"><span class="math-frac"><span>1</span><span>2</span></span> + x<sup>2</sup>?</span>'; $('#answerArea').innerHTML='<label class="answer-option"><input type="radio" name="pa"> Ответ 1</label><label class="answer-option"><input type="radio" name="pa"> Ответ 2</label>'; $('#taskModal').hidden=false; };
+  $$('[data-preview]').forEach(b => b.onclick=()=>{const key=b.dataset.preview;activate(key);hideLayers();if(key==='title')$('#titleScreen').hidden=false;else if(key==='helper')$('#helper').className='helper visible enter-rise';else if(key==='round')showRound();else if(key==='task')showTask();else if(['victory','defeat','timeout'].includes(key))$(`[data-screen="${key}"]`)?.click();});
+  const oldSkip=$('#skipHelper').onclick; $('#skipHelper').onclick=e=>{oldSkip?.call($('#skipHelper'),e);setTimeout(()=>showRound(true),460);setTimeout(()=>activate('game'),470+Math.max(.5,+$('#roundIntroDuration').value||2)*1000);};
+  ['roundIntroText','roundIntroAnimation','roundIntroDuration','roundIntroBg','roundIntroFrame'].forEach(id=>$('#'+id)?.addEventListener('input',()=>{if(!$('#roundIntroScreen').hidden)showRound();}));
+  const paintHud=()=>{for(const [selector,bg,frame] of [['.round-hud','roundHudBg','roundHudFrame'],['.score-hud','scoreHudBg','scoreHudFrame']]){const e=$(selector);e.style.background=$('#'+bg).value;e.style.borderColor=$('#'+frame).value;}};['roundHudBg','roundHudFrame','scoreHudBg','scoreHudFrame'].forEach(id=>$('#'+id)?.addEventListener('input',paintHud));paintHud();
+  const originalExport=$('#exportHtml').onclick; $('#copyGenially').onclick=async()=>{let blob;const make=URL.createObjectURL,click=HTMLAnchorElement.prototype.click;URL.createObjectURL=b=>(blob=b,'blob:preview');HTMLAnchorElement.prototype.click=()=>{};try{originalExport?.();}finally{URL.createObjectURL=make;HTMLAnchorElement.prototype.click=click}if(!blob)return;const bytes=new TextEncoder().encode(await blob.text());let binary='';for(let i=0;i<bytes.length;i+=32768)binary+=String.fromCharCode(...bytes.subarray(i,i+32768));const code=`<div style="position:relative;width:100%;padding-top:56.25%;overflow:hidden"><iframe src="data:text/html;base64,${btoa(binary)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`;try{await navigator.clipboard.writeText(code);$('#copyGenially').textContent='✓ Код скопирован';setTimeout(()=>$('#copyGenially').textContent='Код Genially',1800)}catch{$('#copyGenially').textContent='Копирование запрещено'}};
+})();
