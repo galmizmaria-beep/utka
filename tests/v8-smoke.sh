@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 cd "$(dirname "$0")/.."
-for file in index.html game.html app.js v8.js v8.css; do
+for file in index.html game.html app.js v8.js v8.css tests/v8-browser-smoke.html; do
   test -s "$file" || { echo "Missing $file"; exit 1; }
 done
 grep -q 'Меткий ответ V8' index.html
@@ -30,6 +30,8 @@ grep -q 'bindHelperTransform' v8.js
 grep -q 'helper-selected' v8.css
 grep -q "checkAnswer.*hidden=ok" app.js
 grep -q "taskCard.*className='task-card'" enhancements.js
+grep -q "closest.*#gameStage" enhancements.js
+grep -q 'selectionPersists' tests/v8-browser-smoke.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 echo 'V8 smoke checks passed'
