@@ -32,6 +32,9 @@ grep -q "checkAnswer.*hidden=ok" app.js
 grep -q "taskCard.*className='task-card'" enhancements.js
 grep -q "closest.*#gameStage" enhancements.js
 grep -q 'selectionPersists' tests/v8-browser-smoke.html
+grep -q 'SOUND_PRESETS' app.js
+grep -q 'roundBackground' tests/v8-browser-smoke.html
+grep -q 'continueBackground' tests/v8-browser-smoke.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 echo 'V8 smoke checks passed'
