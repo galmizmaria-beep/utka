@@ -21,6 +21,8 @@ grep -q 'CompressionStream' v8.js
 grep -q 'DecompressionStream' game.html
 grep -q 'v8RoundGlowSize' v8.js
 grep -q 'round-glow' v8.css
+grep -q 'bindTaskSource' v8.js
+grep -q 'internalTaskSync' v8.js
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 echo 'V8 smoke checks passed'
