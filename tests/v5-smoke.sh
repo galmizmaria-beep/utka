@@ -22,6 +22,8 @@ grep -q 'let state=fresh()' app.js
 grep -q 'id="simultaneousTargets"' index.html
 grep -q 'id="lightenProject"' index.html
 grep -q 'lightenObject' enhancements.js
+grep -q 'Код облегчён' enhancements.js
+grep -q 'code-lightened' v5.css
 grep -q '__editorPreviewScreen' app.js
 grep -q 'title="Меткий ответ"' enhancements.js
 if grep -Eq 'location\.reload|iframe\.srcdoc[[:space:]]*=' enhancements.js; then
