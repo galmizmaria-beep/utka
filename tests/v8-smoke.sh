@@ -17,6 +17,10 @@ grep -q "player=1" game.html
 grep -q 'copyGeniallyCode' v8.js
 grep -q 'background.*textColor.*borderColor.*glowColor.*glowSize' v8.js
 grep -q 'v8-player-mode' v8.css
+grep -q 'CompressionStream' v8.js
+grep -q 'DecompressionStream' game.html
+grep -q 'v8RoundGlowSize' v8.js
+grep -q 'round-glow' v8.css
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 echo 'V8 smoke checks passed'
