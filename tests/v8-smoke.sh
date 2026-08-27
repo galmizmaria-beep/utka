@@ -20,7 +20,7 @@ grep -q 'v8-player-mode' v8.css
 grep -q 'CompressionStream' v8.js
 grep -q 'DecompressionStream' game.html
 grep -q 'v8RoundGlowSize' v8.js
-grep -q 'round-glow' v8.css
+grep -q 'v8-round-tab{background:#171d35' v8.css
 grep -q 'bindTaskSource' v8.js
 grep -q 'internalTaskSync' v8.js
 grep -q 'bindSharedRoundStyle' v8.js
@@ -35,6 +35,7 @@ grep -q 'selectionPersists' tests/v8-browser-smoke.html
 grep -q 'SOUND_PRESETS' app.js
 grep -q 'roundBackground' tests/v8-browser-smoke.html
 grep -q 'continueBackground' tests/v8-browser-smoke.html
+grep -q 'editorRoundTabIndependent' tests/v8-browser-smoke.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 echo 'V8 smoke checks passed'
