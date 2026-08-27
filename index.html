@@ -1,139 +1,18 @@
-<!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f6f7fb">
-  <title>Меткий ответ — редактор учебных игр</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="Меткий ответ — на главную">
-        <span class="brand-mark">✦</span>
-        <span><b>Меткий ответ</b><small>редактор учебных игр</small></span>
-      </a>
-      <label class="project-name"><span>Проект</span><input id="projectTitle" value="Моя учебная игра" maxlength="80"></label>
-      <span id="saveStatus" class="save-status">Сохранено</span>
-      <div class="top-actions">
-        <button class="button ghost" id="loadProject">Загрузить проект</button>
-        <button class="button ghost" id="saveProject">Скачать проект</button>
-        <button class="button primary" id="exportHtml">Скачать HTML игры</button>
-        <button class="button accent" id="copyGenially">Скопировать для Genially</button>
-      </div>
-      <input id="projectFile" type="file" accept=".json,.aimquiz.json,application/json" hidden>
-    </header>
-
-    <main class="workspace">
-      <aside class="editor-panel" aria-label="Настройки игры">
-        <nav class="tabs" aria-label="Разделы редактора">
-          <button class="tab active" data-tab="content">Задания</button>
-          <button class="tab" data-tab="design">Дизайн</button>
-          <button class="tab" data-tab="rules">Правила</button>
-        </nav>
-
-        <section class="tab-page active" id="tab-content">
-          <div class="section-head">
-            <div><p class="eyebrow">Учебный контент</p><h1>Задания</h1></div>
-            <button class="icon-button" id="addTask" title="Добавить задание" aria-label="Добавить задание">＋</button>
-          </div>
-          <p class="hint">После попадания по цели ученик увидит одно из заданий.</p>
-          <div id="taskList" class="task-list"></div>
-          <div id="taskEditor" class="task-editor"></div>
-        </section>
-
-        <section class="tab-page" id="tab-design">
-          <p class="eyebrow">Внешний вид</p><h1>Дизайн игры</h1>
-          <div class="form-section">
-            <label>Язык интерфейса
-              <select id="locale">
-                <option value="ru">Русский</option><option value="en">English</option>
-                <option value="es">Español</option><option value="de">Deutsch</option>
-                <option value="fr">Français</option><option value="it">Italiano</option>
-                <option value="kk">Қазақша</option>
-              </select>
-            </label>
-            <p class="mini-note">Переводятся системные надписи. Тексты заданий не меняются.</p>
-          </div>
-          <div class="form-section"><div class="field-title">Фон</div><div id="backgrounds" class="asset-grid"></div>
-            <label class="upload-button">＋ Загрузить свой фон<input id="backgroundUpload" type="file" accept="image/png,image/jpeg,image/webp" hidden></label>
-          </div>
-          <div class="form-section"><div class="field-title">Летающая цель</div><div id="targets" class="asset-grid compact"></div>
-            <label class="upload-button">＋ Загрузить свою цель<input id="targetUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
-          </div>
-          <div class="form-section"><div class="field-title">Помощник</div><div id="helpers" class="asset-grid compact"></div>
-            <label class="upload-button">＋ Загрузить помощника<input id="helperUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
-          </div>
-          <div class="form-section">
-            <div class="field-title">Окно задания</div>
-            <div class="form-grid two">
-              <label>Фон<input id="cardColor" type="color"></label>
-              <label>Акцент<input id="accentColor" type="color"></label>
-              <label>Вопрос, px<input id="questionSize" type="number" min="18" max="52"></label>
-              <label>Ответы, px<input id="answerSize" type="number" min="14" max="36"></label>
-            </div>
-            <label class="switch-row"><span>Свечение карточки</span><input id="glow" type="checkbox" role="switch"></label>
-          </div>
-        </section>
-
-        <section class="tab-page" id="tab-rules">
-          <p class="eyebrow">Игровой баланс</p><h1>Правила и баллы</h1>
-          <div class="form-section form-grid two">
-            <label>Раундов<input id="rounds" type="number" min="1" max="10"></label>
-            <label>Целей в раунде<input id="targetsPerRound" type="number" min="1" max="30"></label>
-            <label>Баллы за попадание<input id="hitPoints" type="number" min="0" max="1000"></label>
-            <label>Баллы за ответ<input id="answerPoints" type="number" min="0" max="1000"></label>
-            <label>Скорость цели
-              <select id="speed"><option value="slow">Спокойная</option><option value="normal">Средняя</option><option value="fast">Быстрая</option></select>
-            </label>
-            <label>Выстрелов<input id="shots" type="number" min="1" max="20"></label>
-          </div>
-          <div class="form-section">
-            <label class="switch-row"><span>Звуковые эффекты</span><input id="sound" type="checkbox" role="switch"></label>
-            <label class="switch-row"><span>Уменьшить анимацию</span><input id="reducedMotion" type="checkbox" role="switch"></label>
-          </div>
-          <button class="button danger-outline" id="resetProject">Сбросить проект</button>
-        </section>
-      </aside>
-
-      <section class="preview-area">
-        <div class="preview-toolbar">
-          <div><p class="eyebrow">Живой предпросмотр</p><h2>Так увидит игру ученик</h2></div>
-          <div class="preview-actions">
-            <span id="modeBadge" class="badge">Редактирование</span>
-            <button class="button ghost" id="restartGame">↻ Перезапустить</button>
-            <button class="button primary" id="toggleTest">▶ Начать тест</button>
-          </div>
-        </div>
-        <div class="stage-wrap">
-          <div id="gameStage" class="game-stage" tabindex="0" aria-label="Предпросмотр игры">
-            <div class="scene-overlay"></div>
-            <div class="hud">
-              <div class="hud-pill"><small id="roundLabel">РАУНД</small><strong id="roundValue">1 / 1</strong></div>
-              <div class="hud-center"><span id="progressDots"></span></div>
-              <div class="hud-pill right"><small id="scoreLabel">СЧЁТ</small><strong id="scoreValue">0</strong></div>
-            </div>
-            <button id="pauseGame" class="pause-button" aria-label="Пауза">Ⅱ</button>
-            <div id="helper" class="helper" aria-hidden="true"><span class="helper-visual">🦊</span><span id="helperBubble" class="helper-bubble">Готовы? Начинаем!</span></div>
-            <button id="flyingTarget" class="flying-target" aria-label="Летающая цель"><span>🦆</span></button>
-            <div id="crosshair" class="crosshair" aria-hidden="true"></div>
-            <div class="bottom-hud"><span id="shotsLabel">ВЫСТРЕЛЫ</span><strong id="shotsValue">● ● ●</strong></div>
-            <div id="startScreen" class="start-screen">
-              <div class="start-card"><span class="start-icon">🎯</span><h3 id="gameTitle">Моя учебная игра</h3><p id="startText">Попадайте по целям и отвечайте на вопросы</p><button id="startGame" class="game-button">Начать игру</button></div>
-            </div>
-            <div id="taskModal" class="task-modal" role="dialog" aria-modal="true" aria-labelledby="modalQuestion" hidden>
-              <div id="taskCard" class="task-card"><span id="taskTypeLabel" class="task-kind"></span><h3 id="modalQuestion"></h3><p id="taskHint" class="task-hint"></p><div id="answerArea" class="answer-area"></div><div id="feedback" class="feedback" aria-live="polite"></div><button id="checkAnswer" class="game-button">Проверить</button><button id="continueGame" class="game-button" hidden>Продолжить</button></div>
-            </div>
-            <div id="resultScreen" class="start-screen" hidden><div class="start-card"><span class="start-icon">🏆</span><h3 id="resultTitle">Игра завершена!</h3><p id="resultStats"></p><button id="playAgain" class="game-button">Играть снова</button></div></div>
-          </div>
-        </div>
-        <p class="preview-note">Предпросмотр обновляется без перезагрузки. Запустите тест, чтобы проверить попадания и задания.</p>
-      </section>
-    </main>
-    <footer>Все права защищены и принадлежат Гальмиз Марии Александровне</footer>
-  </div>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js"></script>
-</body>
-</html>
+<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101425"><title>Меткий ответ V2</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="app-shell"><header class="topbar"><div class="brand"><span class="brand-mark">✦</span><span><b>Меткий ответ</b><small>GAME STUDIO V2</small></span></div><label class="project-name"><small>Название проекта</small><input id="projectTitle" maxlength="100"></label><label class="quick-locale"><span>🌐</span><select id="localeTop"></select></label><span id="saveStatus" class="save-status">● Сохранено</span><div class="top-actions"><button class="btn secondary" id="loadProject">Загрузить</button><button class="btn secondary" id="saveProject">Проект</button><button class="btn primary" id="exportHtml">Скачать HTML</button><button class="btn hot" id="copyGenially">Код Genially</button></div><input id="projectFile" type="file" accept=".json,.aimquiz.json" hidden></header>
+<main class="workspace"><aside class="editor-panel"><nav class="editor-tabs"><button class="editor-tab active" data-page="project">Проект</button><button class="editor-tab" data-page="gameplay">Игра</button><button class="editor-tab" data-page="tasks">Задания</button><button class="editor-tab" data-page="audio">Звуки</button></nav><div class="editor-scroll">
+<section class="editor-page active" id="page-project"><div class="page-heading"><p>ОСНОВНЫЕ НАСТРОЙКИ</p><h1>Проект и оформление</h1></div>
+<details open><summary>Язык и шрифт</summary><div class="detail-body"><label>Язык игры<select id="locale"></select></label><p class="help">Все системные плашки переводятся автоматически. Вопросы учителя не изменяются.</p><label>Шрифт игры<select id="gameFont"></select></label></div></details>
+<details open><summary>Титульный экран</summary><div class="detail-body"><label class="switch"><span>Показывать титульный экран</span><input id="titleEnabled" type="checkbox"></label><div id="titleOptions"><div class="preview-switch"><button class="mini active" data-preview="title">Титульный экран</button><button class="mini" data-preview="game">Игровая сцена</button></div><label>Название<input id="titleText" maxlength="100"></label><label>Подзаголовок<textarea id="titleSubtitle" rows="2"></textarea></label><div class="grid2"><label>Размер названия<input id="titleSize" type="range" min="24" max="72"><output id="titleSizeOut"></output></label><label>Цвет названия<input id="titleColor" type="color"></label></div><label>Текст кнопки «Играть»<input id="playText" maxlength="40"></label><div class="grid2"><label>Фон кнопки<input id="playBg" type="color"></label><label>Текст кнопки<input id="playColor" type="color"></label></div><div class="grid2"><label>Цвет рамки<input id="titleFrame" type="color"></label><label>Свечение рамки<input id="titleGlow" type="color"></label></div><label>Интенсивность свечения<input id="titleGlowSize" type="range" min="0" max="60"><output id="titleGlowOut"></output></label><div class="upload-zone" data-drop="titleBackground"><span>🖼️</span><b>Фон титульного экрана</b><small>Изображение будет автоматически сжато</small><label class="upload-link">Выбрать<input id="titleBackgroundUpload" type="file" accept="image/png,image/jpeg,image/webp" hidden></label><button class="mini danger" id="removeTitleBackground">Удалить</button><em id="titleBackgroundInfo"></em></div></div></div></details>
+<details open><summary>Фон игры</summary><div class="detail-body"><p class="help">Загрузите собственный фон. Готовой базы изображений нет.</p><div class="upload-zone" data-drop="background"><span>🌄</span><b>Фон игры</b><small>PNG, JPEG или WebP · до 15 МБ</small><label class="upload-link">Выбрать с устройства<input id="backgroundUpload" type="file" accept="image/png,image/jpeg,image/webp" hidden></label><button class="mini danger" id="removeBackground">Удалить</button><em id="backgroundInfo"></em></div><div class="grid2"><label>Заполнение<select id="backgroundFit"><option value="cover">Заполнить</option><option value="contain">Вписать</option></select></label><label>Цвет без фона<input id="backgroundColor" type="color"></label></div><div class="grid2"><label>Затемнение<input id="backgroundDim" type="range" min="0" max="70"><output id="backgroundDimOut"></output></label><label>Размытие<input id="backgroundBlur" type="range" min="0" max="12"><output id="backgroundBlurOut"></output></label></div></div></details>
+<details><summary>Окно задания</summary><div class="detail-body"><div class="grid2"><label>Фон<input id="cardColor" type="color"></label><label>Акцент<input id="accentColor" type="color"></label><label>Вопрос, px<input id="questionSize" type="number" min="18" max="52"></label><label>Ответы, px<input id="answerSize" type="number" min="14" max="36"></label></div><label class="switch"><span>Свечение карточки</span><input id="cardGlow" type="checkbox"></label></div></details></section>
+<section class="editor-page" id="page-gameplay"><div class="page-heading"><p>ИГРОВАЯ МЕХАНИКА</p><h1>Цели и правила</h1></div>
+<details open><summary>Цель</summary><div class="detail-body"><div id="targets" class="asset-grid"></div><div class="upload-zone compact"><label class="upload-link">Загрузить свою цель<input id="targetUpload" type="file" accept="image/png,image/jpeg,image/webp" hidden></label><em id="targetInfo"></em></div><label>Размер цели<input id="targetSize" type="range" min="40" max="180"><output id="targetSizeOut"></output></label></div></details>
+<details open><summary>Траектория и частота</summary><div class="detail-body"><label>Траектория<select id="trajectory"><option value="random">Случайная</option><option value="left-right">Слева направо</option><option value="right-left">Справа налево</option><option value="bottom-up">Снизу вверх</option><option value="diagonal">Диагональ</option><option value="arc">Дуга</option><option value="wave">Волна</option><option value="zigzag">Зигзаг</option></select></label><div class="grid2"><label>Интервал, сек<input id="spawnInterval" type="number" min="0.5" max="10" step="0.1"></label><label>На сцене, сек<input id="targetDuration" type="number" min="1" max="15" step="0.5"></label></div><label>Эффект попадания<select id="hitEffect"><option value="stars">Звёздная вспышка</option><option value="confetti">Конфетти</option><option value="cloud">Облачко</option><option value="pixels">Пиксельный взрыв</option><option value="fade">Растворение</option></select></label></div></details>
+<details open><summary>Прицел</summary><div class="detail-body"><div id="crosshairs" class="asset-grid crosshair-grid"></div><label>Размер прицела<input id="crosshairSize" type="range" min="32" max="160"><output id="crosshairSizeOut"></output></label><div class="grid2"><label>Цвет<input id="crosshairColor" type="color"></label><label>Толщина<input id="crosshairWidth" type="range" min="1" max="8"></label></div></div></details>
+<details open><summary>Помощник и правила</summary><div class="detail-body"><div id="helpers" class="asset-grid"></div><div class="upload-zone compact"><label class="upload-link">Загрузить помощника<input id="helperUpload" type="file" accept="image/png,image/jpeg,image/webp" hidden></label><em id="helperInfo"></em></div><label>Текст правил<textarea id="helperRules" rows="5"></textarea></label><p class="help">LaTeX: <code>$x^2$</code>, <code>\frac{a}{b}</code>, <code>\sqrt{x}</code>.</p><label>Время показа<input id="helperDuration" type="range" min="1" max="30"><output id="helperDurationOut"></output></label><div class="grid2"><label>Вход<select id="helperEnter"><option value="rise">Снизу вверх</option><option value="left">Слева</option><option value="right">Справа</option><option value="zoom">Увеличение</option><option value="bounce">Подпрыгивание</option><option value="fade">Появление</option></select></label><label>Выход<select id="helperExit"><option value="fade">Исчезновение</option><option value="down">Вниз</option><option value="left">Влево</option><option value="right">Вправо</option><option value="shrink">Уменьшение</option></select></label></div><label class="switch"><span>Кнопка «Пропустить»</span><input id="helperSkip" type="checkbox"></label></div></details>
+<details open><summary>Жизни, раунды и баллы</summary><div class="detail-body"><label class="switch"><span>Использовать жизни</span><input id="livesEnabled" type="checkbox"></label><div class="grid2"><label>Количество<input id="livesCount" type="number" min="1" max="20"></label><label>Вид<select id="livesIcon"><option value="❤">Сердца</option><option value="★">Звёзды</option><option value="⬟">Щиты</option><option value="🔋">Батарейки</option></select></label><label>Раундов<input id="rounds" type="number" min="1" max="10"></label><label>Целей в раунде<input id="targetsPerRound" type="number" min="1" max="30"></label><label>За попадание<input id="hitPoints" type="number" min="0"></label><label>За ответ<input id="answerPoints" type="number" min="0"></label></div><label class="switch"><span>Жизнь за неверный ответ</span><input id="lifeWrong" type="checkbox"></label><label class="switch"><span>Жизнь, если цель улетела</span><input id="lifeEscaped" type="checkbox"></label></div></details></section>
+<section class="editor-page" id="page-tasks"><div class="page-heading row"><div><p>УЧЕБНЫЙ КОНТЕНТ</p><h1>Задания</h1></div><button class="round-button" id="addTask">＋</button></div><p class="help">Формулы: <code>$x^2$</code>, <code>$$\frac{-b\pm\sqrt{D}}{2a}$$</code>.</p><div id="taskList" class="task-list"></div><div id="taskEditor" class="task-editor"></div></section>
+<section class="editor-page" id="page-audio"><div class="page-heading"><p>ЗВУКОВОЕ ОФОРМЛЕНИЕ</p><h1>Библиотека звуков</h1></div><label class="switch card-row"><span>Звуковые эффекты</span><input id="soundEnabled" type="checkbox"></label><label class="card-row">Общая громкость<input id="volume" type="range" min="0" max="100"><output id="volumeOut"></output></label><div id="soundLibrary" class="sound-library"></div><button class="btn danger full" id="resetProject">Сбросить весь проект</button></section>
+</div></aside>
+<section class="preview-area"><div class="preview-toolbar"><div><p>ЖИВОЙ ПРЕДПРОСМОТР</p><h2>Игра ученика</h2></div><div class="preview-actions"><span id="modeBadge" class="badge">Редактирование</span><button class="btn secondary" id="showTitle">Титул</button><button class="btn secondary" id="showGame">Сцена</button><button class="btn secondary" id="restartGame">↻</button><button class="btn primary" id="toggleTest">▶ Тест</button></div></div><div class="stage-frame"><div id="gameStage" class="game-stage" tabindex="0"><div id="backgroundLayer" class="background-layer"></div><div id="sceneShade" class="scene-shade"></div><div class="hud"><div class="hud-block"><small id="roundLabel">РАУНД</small><strong id="roundValue">1 / 1</strong></div><div id="livesHud" class="lives-hud"></div><div class="hud-block right"><small id="scoreLabel">СЧЁТ</small><strong id="scoreValue">0</strong></div></div><button id="pauseGame" class="pause-button">Ⅱ</button><div id="helper" class="helper"><div class="helper-art">🦊</div><div class="helper-dialog"><div id="helperBubble"></div><button id="skipHelper" class="skip-button">Пропустить</button></div></div><button id="flyingTarget" class="flying-target">🦆</button><div id="hitParticles" class="hit-particles"></div><div id="crosshair" class="crosshair classic"></div><div id="titleScreen" class="title-screen"><div id="titleCard" class="title-card"><h3 id="titlePreview"></h3><p id="subtitlePreview"></p><button id="startGame" class="play-button"></button></div></div><div id="taskModal" class="task-modal" hidden><div id="taskCard" class="task-card"><span id="taskTypeLabel"></span><div id="modalQuestion" class="question"></div><div id="taskHint" class="task-hint"></div><div id="answerArea" class="answer-area"></div><div id="feedback" class="feedback"></div><button id="checkAnswer" class="play-button">Проверить</button><button id="continueGame" class="play-button" hidden>Продолжить</button></div></div><div id="resultScreen" class="title-screen" hidden><div class="title-card"><div class="trophy">🏆</div><h3 id="resultTitle"></h3><p id="resultStats"></p><button id="playAgain" class="play-button"></button></div></div></div></div><p class="preview-note">Изменения применяются без перезагрузки сцены. Нажмите «Тест», чтобы проверить игру.</p></section></main><footer>Все права защищены и принадлежат Гальмиз Марии Александровне</footer></div><div id="toast" class="toast"></div><script src="app.js"></script></body></html>
