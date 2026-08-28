@@ -49,6 +49,14 @@ grep -q 'targetTrajectoryPreview' tests/v8-browser-smoke.html
 grep -q 'initialGameButtonNeutral' tests/v8-browser-smoke.html
 grep -q 'updateTaskProgress(game.hits)' app.js
 grep -q 'completedTaskProgress' tests/v8-browser-smoke.html
+grep -q 'v8RoundEnterAnimation' v8.js
+grep -q 'v8RoundExitAnimation' v8.js
+grep -q 'Без анимации' v8.js
+grep -q 'previewRoundEffect' enhancements.js
+grep -q 'playRoundIntro' app.js
+grep -q 'roundStylePreviewStatic' tests/v8-browser-smoke.html
+grep -q 'roundEnterPreview' tests/v8-browser-smoke.html
+grep -q 'roundExitPreview' tests/v8-browser-smoke.html
 grep -q 'v8.css?v=' index.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
