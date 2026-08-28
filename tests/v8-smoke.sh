@@ -78,6 +78,12 @@ grep -q "peacock:{motion:'ground',wing:'none'" app.js
 grep -q "book:{motion:'slide',wing:'none'" app.js
 grep -q "\['hop','ground','slide','swim'\]" app.js
 grep -Fq 'data:image\/gif' enhancements.js
+grep -q 'HELPER_ANIMATED' app.js
+grep -q 'function helperMarkup' app.js
+grep -q 'helperMarkup(id,null,true)' app.js
+grep -q 'helperMarkup(state.helper.kind,state.helper.custom)' app.js
+grep -q 'У помощников есть только визуальная анимация' app.js
+grep -q 'helper-art picture' enhancements.css
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("enhancements.js",4,null).js; new Function(s)' >/dev/null
