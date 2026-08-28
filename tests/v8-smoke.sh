@@ -58,10 +58,17 @@ grep -q 'roundStylePreviewStatic' tests/v8-browser-smoke.html
 grep -q 'roundEnterPreview' tests/v8-browser-smoke.html
 grep -q 'roundExitPreview' tests/v8-browser-smoke.html
 grep -q 'function renderMath' app.js
-grep -q 'standaloneRuntime(C,D,M)' app.js
+grep -q 'standaloneRuntime(C,D,M,P,V)' app.js
 grep -q 'absoluteValueDoesNotSplitAnswers' tests/latex-browser-smoke.html
 grep -q 'standaloneActuallyRendersFormula' tests/latex-browser-smoke.html
+grep -q 'standaloneTargetFalls' tests/latex-browser-smoke.html
+grep -q 'standaloneTaskOpens' tests/latex-browser-smoke.html
 grep -q 'math-cases' enhancements.css
+grep -q 'TARGET_PROFILES' app.js
+grep -q 'scheduleTargetVoice' app.js
+grep -q 'target-shot' app.js
+grep -q 'targetWingLeft' enhancements.css
+grep -q 'targetFallsBeforeTask' tests/v8-browser-smoke.html
 grep -q 'v8.css?v=' index.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
