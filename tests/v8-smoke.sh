@@ -70,6 +70,14 @@ grep -q 'target-shot' app.js
 grep -q 'targetWingLeft' enhancements.css
 grep -q 'targetFallsBeforeTask' tests/v8-browser-smoke.html
 grep -q 'v8.css?v=' index.html
+grep -q 'targetMediaUrl' index.html
+grep -q 'Noto Animated Emoji' app.js
+grep -q 'duck_female_0.gif' app.js
+grep -q 'Special:Redirect/file/Geese' app.js
+grep -q "peacock:{motion:'ground',wing:'none'" app.js
+grep -q "book:{motion:'slide',wing:'none'" app.js
+grep -q "\['hop','ground','slide','swim'\]" app.js
+grep -Fq 'data:image\/gif' enhancements.js
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("enhancements.js",4,null).js; new Function(s)' >/dev/null

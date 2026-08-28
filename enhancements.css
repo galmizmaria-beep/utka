@@ -23,13 +23,17 @@
 .math-case-row{display:block;white-space:nowrap}
 .math-inline sup,.math-inline sub,.math-block sup,.math-block sub{font-size:.68em;line-height:0}
 
-/* Живые цели: лёгкая векторная анимация остаётся внутри HTML и Genially. */
+/* Живые цели: медиа загружаются по HTTPS и не раздувают HTML/Genially. */
 .target-voice-card{display:grid;gap:8px;margin-top:12px;padding:12px;border:1px solid #3d4767;border-radius:12px;background:#111629}
 .target-voice-card>b{color:#edf1ff}.target-voice-card>span{color:#5be0a6;font-size:11px;font-weight:850}.target-voice-card label{margin:0!important}
+.remote-media-card{display:grid;gap:8px;margin-top:10px;padding:12px;border:1px solid #3d4767;border-radius:12px;background:#111629}.remote-media-card label{margin:0!important}.remote-media-card small,.media-license{color:#8f9ab9;font-size:10px;line-height:1.45}.media-license{margin:8px 2px 0}
 .flying-target{overflow:visible;transform-origin:50% 55%}
 .target-character{position:relative;display:block;width:100%;height:100%;pointer-events:none;transform-origin:center;--flap-speed:300ms;--wing-color:#d8dee9}
-.target-body{position:absolute;z-index:2;left:50%;top:50%;display:grid;place-items:center;width:72%;height:72%;font-size:.78em;line-height:1;transform:translate(-50%,-50%);transform-origin:center;filter:drop-shadow(0 3px 2px #0004)}
+.target-body{position:absolute;z-index:2;left:50%;top:50%;display:grid;place-items:center;width:88%;height:88%;font-size:.78em;line-height:1;transform:translate(-50%,-50%);transform-origin:center;filter:drop-shadow(0 3px 2px #0004)}
+.target-body picture{display:block;width:100%;height:100%}
 .target-body img{display:block;width:100%;height:100%;object-fit:contain}
+.target-art-animated .target-body{animation:none!important}
+.target-character[data-kind="duck"] .target-body img{image-rendering:pixelated}
 .target-wing{position:absolute;z-index:1;top:31%;width:44%;height:31%;background:linear-gradient(145deg,color-mix(in srgb,var(--wing-color) 70%,white),var(--wing-color));filter:drop-shadow(0 2px 1px #0004);transform-origin:90% 55%;clip-path:polygon(100% 42%,72% 2%,18% 8%,0 35%,18% 62%,5% 92%,58% 82%,92% 63%)}
 .target-wing-left{right:55%;animation:targetWingLeft var(--flap-speed) ease-in-out infinite alternate}
 .target-wing-right{left:55%;transform-origin:10% 55%;animation:targetWingRight var(--flap-speed) ease-in-out infinite alternate;clip-path:polygon(0 42%,28% 2%,82% 8%,100% 35%,82% 62%,95% 92%,42% 82%,8% 63%)}
