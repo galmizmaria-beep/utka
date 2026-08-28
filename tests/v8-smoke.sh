@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 cd "$(dirname "$0")/.."
-for file in index.html game.html app.js v8.js v8.css tests/v8-browser-smoke.html; do
+for file in index.html game.html app.js v8.js v8.css tests/v8-browser-smoke.html tests/latex-browser-smoke.html; do
   test -s "$file" || { echo "Missing $file"; exit 1; }
 done
 grep -q 'Меткий ответ V8' index.html
@@ -57,6 +57,11 @@ grep -q 'playRoundIntro' app.js
 grep -q 'roundStylePreviewStatic' tests/v8-browser-smoke.html
 grep -q 'roundEnterPreview' tests/v8-browser-smoke.html
 grep -q 'roundExitPreview' tests/v8-browser-smoke.html
+grep -q 'function renderMath' app.js
+grep -q 'standaloneRuntime(C,D,M)' app.js
+grep -q 'absoluteValueDoesNotSplitAnswers' tests/latex-browser-smoke.html
+grep -q 'standaloneActuallyRendersFormula' tests/latex-browser-smoke.html
+grep -q 'math-cases' enhancements.css
 grep -q 'v8.css?v=' index.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null

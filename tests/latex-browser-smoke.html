@@ -1,0 +1,24 @@
+<!doctype html><meta charset="utf-8"><title>LaTeX browser smoke</title>
+<iframe id="editor" src="../index.html?latex-smoke=1" style="width:1200px;height:800px"></iframe>
+<div id="formulaOutput" hidden></div><pre id="result">RUNNING</pre>
+<script>
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+editor.onload=async()=>{
+ const d=editor.contentDocument,w=editor.contentWindow,checks={};await wait(180);
+ const sample=String.raw`$a^2+b^2=c^2$ $\frac{x+1}{y-2}$ $\sqrt[n]{a}$ $\left|x\right|$ $\times\;\cdot\;\div\;\pm\;\neq\;\leq\;\geq\;\infty\;\pi\;\approx$ $\sum_{i=1}^{n}i$ $\lim_{x\to0}f(x)$ $25\%$ $\angle ABC\;90^\circ\;\triangle ABC\;a\parallel b\;a\perp b\;\overline{AB}$ $S=24\text{ см}^2$ $$\begin{cases}x+y=5\\x-y=1\end{cases}$$ $\frac{-b\pm\sqrt{b^2-4ac}}{2a}$`;
+ const output=d.createElement('div');output.innerHTML=w.EditorV5.math(sample);d.body.append(output);
+ checks.allPdfCommandsConverted=!/\\(?:frac|sqrt|left|right|begin|end|text|overline|sum|lim|angle|triangle|parallel|perp|circ|neq|leq|geq)\b/.test(output.innerHTML);
+ checks.nestedFraction=output.querySelectorAll('.math-frac').length>=2&&!!output.querySelector('.math-frac .math-root');
+ checks.nthRoot=!!output.querySelector('.math-root-index');
+ checks.absoluteValue=output.textContent.includes('|x|');
+ checks.symbols=['×','·','÷','±','≠','≤','≥','∞','π','≈','→','∠','△','∥','⊥','°'].every(symbol=>output.textContent.includes(symbol));
+ checks.overlineAndUnits=!!output.querySelector('.math-overline')&&!!output.querySelector('.math-text');
+ checks.cases=output.querySelectorAll('.math-case-row').length===2;
+ const source=d.querySelector('#taskSource');source.value=String.raw`Чему равно $\frac{\left|x\right|}{\sqrt{x^2}}$? | $x$* | $-x$`;source.dispatchEvent(new Event('input',{bubbles:true}));await wait(280);
+ const tasks=w.EditorV5.getConfig().tasks;checks.absoluteValueDoesNotSplitAnswers=tasks.length===1&&tasks[0].answers.length===2&&tasks[0].question.includes(String.raw`\left|x\right|`);
+ const config=w.EditorV5.getConfig();config.helper.duration=.05;config.roundIntro.duration=.05;config.audio.enabled=false;const exported=w.EditorV5.generateStandalone();checks.standaloneUsesSameRenderer=exported.includes('function renderMath')&&exported.includes('math-cases')&&exported.includes('M(a.text)');
+ const player=d.createElement('iframe');player.srcdoc=exported;d.body.append(player);await new Promise(resolve=>player.addEventListener('load',resolve,{once:true}));const pd=player.contentDocument;pd.querySelector('#startGame').click();await wait(30);pd.querySelector('#skipHelper').click();await wait(100);pd.querySelector('#flyingTarget').click();await wait(80);checks.standaloneActuallyRendersFormula=!!pd.querySelector('#modalQuestion .math-frac .math-root')&&pd.querySelector('#modalQuestion').textContent.includes('|x|');
+ checks.htmlEscaped=!w.EditorV5.math('$<img src=x>$').includes('<img');
+ const failed=Object.entries(checks).filter(([,ok])=>!ok);result.textContent=(failed.length?'FAIL ':'PASS ')+JSON.stringify(checks);document.body.dataset.status=failed.length?'fail':'pass';w.stop?.();
+};
+</script>
