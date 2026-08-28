@@ -5,7 +5,7 @@ for file in index.html game.html app.js v8.js v8.css tests/v8-browser-smoke.html
   test -s "$file" || { echo "Missing $file"; exit 1; }
 done
 grep -q 'Меткий ответ V8' index.html
-grep -q 'src="v8.js"' index.html
+grep -q 'src="v8.js' index.html
 grep -q 'schemaVersion=8' v8.js
 grep -q 'difficultyDefaults' v8.js
 grep -q 'page-difficulty' v8.js
@@ -36,6 +36,15 @@ grep -q 'SOUND_PRESETS' app.js
 grep -q 'roundBackground' tests/v8-browser-smoke.html
 grep -q 'continueBackground' tests/v8-browser-smoke.html
 grep -q 'editorRoundTabIndependent' tests/v8-browser-smoke.html
+grep -q 'protectEditorRoundTabs' v8.js
+grep -q 'editorRoundTabHasNoInlineStyle' tests/v8-browser-smoke.html
+grep -q 'playFullGame' enhancements.js
+grep -q 'textAnswerInput' app.js
+grep -q 'inputAnswerBackgroundColor' v8.js
+grep -q 'simplifyEditor' v8.js
+grep -q 'gameButtonStartsFullTest' tests/v8-browser-smoke.html
+grep -q 'v8.css?v=' index.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
+osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("enhancements.js",4,null).js; new Function(s)' >/dev/null
 echo 'V8 smoke checks passed'
