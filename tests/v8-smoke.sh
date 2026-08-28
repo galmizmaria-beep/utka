@@ -43,6 +43,12 @@ grep -q 'textAnswerInput' app.js
 grep -q 'inputAnswerBackgroundColor' v8.js
 grep -q 'simplifyEditor' v8.js
 grep -q 'gameButtonStartsFullTest' tests/v8-browser-smoke.html
+grep -q 'showTargetPreview' enhancements.js
+grep -q 'crosshairPreviewUpdates' tests/v8-browser-smoke.html
+grep -q 'targetTrajectoryPreview' tests/v8-browser-smoke.html
+grep -q 'initialGameButtonNeutral' tests/v8-browser-smoke.html
+grep -q 'updateTaskProgress(game.hits)' app.js
+grep -q 'completedTaskProgress' tests/v8-browser-smoke.html
 grep -q 'v8.css?v=' index.html
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
