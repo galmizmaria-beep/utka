@@ -84,6 +84,13 @@ grep -q 'helperMarkup(id,null,true)' app.js
 grep -q 'helperMarkup(state.helper.kind,state.helper.custom)' app.js
 grep -q 'У помощников есть только визуальная анимация' app.js
 grep -q 'helper-art picture' enhancements.css
+grep -q 'targetMarkup(id,null,true)' app.js
+grep -q 'asset-card\[data-target\].*target-character' enhancements.css
+grep -q "!HELPER_ANIMATED\[n.helper.kind\].*n.helper.kind='fox'" app.js
+if grep -q "\['capy','Капибара'\]\|\['wizard','Волшебник'\]\|\['scientist','Учёный'\]" app.js; then
+  echo 'Static helper emoji found'
+  exit 1
+fi
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("app.js",4,null).js; new Function(s)' >/dev/null
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("enhancements.js",4,null).js; new Function(s)' >/dev/null

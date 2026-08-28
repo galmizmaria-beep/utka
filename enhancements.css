@@ -28,6 +28,7 @@
 .target-voice-card>b{color:#edf1ff}.target-voice-card>span{color:#5be0a6;font-size:11px;font-weight:850}.target-voice-card label{margin:0!important}
 .remote-media-card{display:grid;gap:8px;margin-top:10px;padding:12px;border:1px solid #3d4767;border-radius:12px;background:#111629}.remote-media-card label{margin:0!important}.remote-media-card small,.media-license{color:#8f9ab9;font-size:10px;line-height:1.45}.media-license{margin:8px 2px 0}
 .asset-card span picture{display:block;width:100%;height:38px}.asset-card span picture img{display:block;width:100%;height:100%;object-fit:contain}
+.asset-card[data-target] .target-character{width:100%;height:38px}.asset-card[data-target] .target-body{font-size:29px}.asset-card[data-target] .target-motion-trail{pointer-events:none}
 .helper-art picture{display:block;width:100%;height:100%}.helper-art picture img{display:block;width:100%!important;height:100%!important;object-fit:contain}
 .flying-target{overflow:visible;transform-origin:50% 55%}
 .target-character{position:relative;display:block;width:100%;height:100%;pointer-events:none;transform-origin:center;--flap-speed:300ms;--wing-color:#d8dee9}
@@ -53,6 +54,7 @@
 .target-motion-float .target-body,.target-motion-magic .target-body,.target-motion-hover .target-body{animation:targetFloat .9s ease-in-out infinite alternate}
 .target-motion-spin .target-body{animation:targetSpin 1.7s linear infinite}
 .target-motion-glide .target-body{animation:targetGlide 1.1s ease-in-out infinite alternate}
+.target-motion-slide .target-body{animation:targetSlide .85s ease-in-out infinite alternate}
 .target-motion-rocket .target-body{animation:targetRocketShake .1s linear infinite alternate}
 .target-motion-rocket .target-motion-trail{position:absolute;z-index:0;right:65%;top:43%;width:45%;height:17%;border-radius:100% 0 0 100%;background:linear-gradient(90deg,transparent,#ffed6b,#ff5a36);filter:drop-shadow(0 0 7px #ff6b35);animation:targetTrail .16s linear infinite alternate}
 .target-motion-magic .target-motion-trail,.target-motion-float .target-motion-trail{position:absolute;inset:12%;border:2px dotted color-mix(in srgb,var(--wing-color) 70%,white);border-radius:50%;animation:targetAura 2s linear infinite;opacity:.7}
@@ -68,6 +70,7 @@
 @keyframes targetFloat{from{transform:translate(-50%,-57%)}to{transform:translate(-50%,-43%)}}
 @keyframes targetSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes targetGlide{from{transform:translate(-50%,-50%) rotate(-7deg)}to{transform:translate(-50%,-50%) rotate(5deg)}}
+@keyframes targetSlide{from{transform:translate(-56%,-50%) rotate(-2deg)}to{transform:translate(-44%,-50%) rotate(2deg)}}
 @keyframes targetRocketShake{from{transform:translate(-51%,-50%) rotate(-2deg)}to{transform:translate(-49%,-50%) rotate(2deg)}}
 @keyframes targetTrail{from{transform:scaleX(.7);opacity:.65}to{transform:scaleX(1.18);opacity:1}}
 @keyframes targetAura{to{transform:rotate(360deg)}}
