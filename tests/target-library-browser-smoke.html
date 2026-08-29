@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Target library smoke</title></head>
+<body>
+<iframe id="editor" src="../index.html?target-library-smoke=1" style="width:1200px;height:800px"></iframe>
+<pre id="result">RUNNING</pre>
+<script>
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+editor.onload=async()=>{
+ const doc=editor.contentDocument,win=editor.contentWindow,checks={};
+ await wait(350);
+ const category=doc.querySelector('#targetCategory'),expected={plants:10,fruits:10,vegetables:10,food:12,transport:11};
+ checks.categoryOptions=Object.keys(expected).every(key=>category.querySelector(`option[value="${key}"]`));
+ checks.categoryCounts=true;
+ checks.everyNewTargetAnimated=true;
+ for(const[key,count]of Object.entries(expected)){
+  category.value=key;
+  category.dispatchEvent(new Event('change',{bubbles:true}));
+  await wait(20);
+  const cards=[...doc.querySelectorAll('#targets .asset-card')];
+  checks.categoryCounts&&=cards.length===count;
+  checks.everyNewTargetAnimated&&=cards.every(card=>card.querySelector('picture source[type="image/webp"]')&&card.querySelector('picture img'));
+ }
+ const voiced=[...(win.__voicedTargets||[])].sort(),profiles=Object.entries(win.__targetProfiles||{});
+ checks.onlyFiveRealVoices=JSON.stringify(voiced)===JSON.stringify(['cat','duck','frog','goose','peacock'])&&profiles.filter(([,profile])=>profile.voice?.url).length===5&&profiles.every(([kind,profile])=>!!profile.voice?.url===voiced.includes(kind));
+ category.value='fruits';category.dispatchEvent(new Event('change',{bubbles:true}));await wait(20);
+ doc.querySelector('[data-target="strawberry"]').click();await wait(20);
+ checks.silentTargetDisablesControls=doc.querySelector('#targetVoiceName').textContent==='Без озвучки'&&doc.querySelector('#targetVoiceEnabled').disabled&&doc.querySelector('#targetVoiceVolume').disabled;
+ category.value='birds';category.dispatchEvent(new Event('change',{bubbles:true}));await wait(20);
+ doc.querySelector('[data-target="duck"]').click();await wait(20);
+ checks.duckKeepsRealVoice=doc.querySelector('#targetVoiceName').textContent==='Кряканье утки'&&!doc.querySelector('#targetVoiceEnabled').disabled&&!doc.querySelector('#targetVoiceVolume').disabled;
+ const failed=Object.entries(checks).filter(([,ok])=>!ok);
+ result.textContent=(failed.length?'FAIL ':'PASS ')+JSON.stringify(checks);
+ document.body.dataset.status=failed.length?'fail':'pass';
+ win.stop?.();
+};
+</script>
+</body>
+</html>

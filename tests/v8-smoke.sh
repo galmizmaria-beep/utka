@@ -66,6 +66,12 @@ grep -q 'standaloneTaskOpens' tests/latex-browser-smoke.html
 grep -q 'math-cases' enhancements.css
 grep -q 'TARGET_PROFILES' app.js
 grep -q 'scheduleTargetVoice' app.js
+grep -q "fallen_leaf.*plants" app.js
+grep -q "strawberry.*fruits" app.js
+grep -q "carrot.*vegetables" app.js
+grep -q "pizza.*food" app.js
+grep -q "bicycle.*transport" app.js
+grep -q 'VOICED_TARGETS' app.js
 grep -q 'target-shot' app.js
 grep -q 'targetWingLeft' enhancements.css
 grep -q 'targetFallsBeforeTask' tests/v8-browser-smoke.html
