@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 for file in index.html app.js styles.css enhancements.js enhancements.css v5.css; do
   test -s "$file" || { echo "Missing $file"; exit 1; }
 done
-grep -q 'schemaVersion:5' app.js
+grep -q 'schemaVersion:8' app.js
 grep -q 'window.EditorV5' app.js
 grep -q 'runV5PreviewStabilityTest' enhancements.js
 grep -q 'data-preview="title"' index.html
@@ -18,7 +18,12 @@ grep -q 'id="v6CheckBg"' index.html
 grep -q 'id="v6CrosshairSize"' index.html
 grep -q 'particle-lightning' v5.css
 grep -q 'config.crosshair' enhancements.js
-grep -q 'state=editorPlayerMode?fresh():migrate(load())' app.js
+grep -q 'pendingAutosave=editorPlayerMode?null:load()' app.js
+grep -q 'id="restoreContinue"' index.html
+grep -q 'id="restoreDelete"' index.html
+grep -q 'id="undoAction"' index.html
+grep -q 'id="redoAction"' index.html
+grep -q 'id="helperMediaUrl"' index.html
 grep -q 'id="simultaneousTargets"' index.html
 grep -q 'id="lightenProject"' index.html
 grep -q 'lightenObject' enhancements.js

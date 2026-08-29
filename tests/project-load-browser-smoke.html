@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Project load browser smoke</title></head>
+<body>
+<iframe id="editor" src="../index.html?project-load-smoke=1" style="width:1200px;height:800px"></iframe>
+<pre id="result">RUNNING</pre>
+<script>
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const loadFile=async(doc,project,name='saved.aimquiz.json')=>{
+  const transfer=new DataTransfer();
+  transfer.items.add(new File([JSON.stringify(project)],name,{type:'application/json'}));
+  const input=doc.querySelector('#projectFile');
+  input.files=transfer.files;
+  input.dispatchEvent(new Event('change',{bubbles:true}));
+  await wait(650);
+};
+editor.onload=async()=>{
+  const doc=editor.contentDocument,win=editor.contentWindow,checks={};
+  await wait(350);
+  const input=doc.querySelector('#projectFile'),loadButton=doc.querySelector('#loadProject');
+  let pickerClicks=0;
+  input.click=()=>pickerClicks++;
+  loadButton.click();
+  checks.loadButtonOpensPicker=pickerClicks===1;
+
+  const source1='[ввод] Цвет неба | синий\n2 + 2? | 4* | 5';
+  const source2='[порядок] Расставьте | первый | второй\n[устно] Объясните правило';
+  const project=structuredClone(win.EditorV5.getConfig());
+  project.locale='en';
+  project.titleScreen.title='Сохранённая игра';
+  project.scene.color='#123456';
+  project.scene.background=null;
+  project.helper.kind='owl';
+  project.helper.rules='Сохранённые правила';
+  project.target.kind='ghost';
+  project.target.size=137;
+  project.taskTheme.backgroundColor='#fedcba';
+  project.taskTheme.questionFontSize=41;
+  project.screens.victory.title='Особая победа';
+  project.difficulties.easy.background='#135724';
+  project.taskSource=source2;
+  project.tasks=[{id:'stale',type:'oral',question:'СТАРЫЙ ВОПРОС',answers:[]}];
+  project.rounds=[
+    {...project.rounds[0],id:'saved-round-1',title:'Загруженный раунд 1',taskCount:2,taskSource:source1,tasks:[{id:'stale-1',type:'oral',question:'НЕВЕРНО',answers:[]}]},
+    {...project.rounds[0],id:'saved-round-2',title:'Загруженный раунд 2',taskCount:2,taskSource:source2,tasks:[{id:'stale-2',type:'oral',question:'НЕВЕРНО',answers:[]}]}
+  ];
+  await loadFile(doc,project);
+  const loaded=win.EditorV5.getConfig();
+  checks.fileInputCleared=input.value===''&&input.files.length===0;
+  checks.loadButtonRestored=!loadButton.disabled&&loadButton.textContent==='Загрузить';
+  checks.allRoundsLoaded=loaded.rounds.length===2&&doc.querySelectorAll('#v8RoundTabs .v8-round-tab').length===2;
+  checks.firstRoundQuestionsVisible=doc.querySelector('#v8RoundTaskSource').value===source1;
+  checks.firstRoundParsed=loaded.rounds[0].tasks.length===2&&loaded.rounds[0].tasks[0].type==='input'&&loaded.rounds[0].tasks[0].question==='Цвет неба';
+  checks.secondRoundParsed=loaded.rounds[1].tasks.length===2&&loaded.rounds[1].tasks[0].type==='order'&&loaded.rounds[1].tasks[1].type==='oral';
+  checks.activeQuestionsMatchField=loaded.taskSource===source1&&loaded.tasks[0].question==='Цвет неба';
+  checks.mainSettingsLoaded=doc.querySelector('#titleText').value==='Сохранённая игра'&&doc.querySelector('#helperRules').value==='Сохранённые правила'&&doc.querySelector('#targetSize').value==='137';
+  checks.extendedSettingsLoaded=doc.querySelector('#v5TaskBg').value==='#fedcba'&&doc.querySelector('#v5QuestionSize').value==='41'&&doc.querySelector('[data-difficulty="easy"] [data-k="background"]').value==='#135724';
+  checks.previewLoaded=doc.querySelector('#titlePreview').textContent==='Сохранённая игра'&&getComputedStyle(doc.querySelector('#backgroundLayer')).backgroundColor==='rgb(18, 52, 86)';
+  doc.querySelector('[data-screen="victory"]').click();
+  await wait(30);
+  checks.resultScreenEditorLoaded=doc.querySelector('#screenTitle').value==='Особая победа';
+
+  doc.querySelector('[data-round="1"]').click();
+  await wait(30);
+  checks.secondRoundQuestionsVisible=doc.querySelector('#v8RoundTaskSource').value===source2;
+  const snapshot=win.EditorV5.projectSnapshot();
+  checks.snapshotKeepsEveryRound=snapshot.rounds[0].taskSource===source1&&snapshot.rounds[0].tasks[0].question==='Цвет неба'&&snapshot.rounds[1].taskSource===source2&&snapshot.rounds[1].tasks[0].type==='order';
+
+  loaded.titleScreen.title='Изменено после загрузки';
+  await loadFile(doc,project,'saved.aimquiz.json');
+  checks.sameFileCanBeLoadedAgain=win.EditorV5.getConfig().titleScreen.title==='Сохранённая игра';
+
+  const legacy={schemaVersion:1,meta:{title:'Игра V1'},targets:{kind:'brain'},assistant:{kind:'graduate',rules:'Старые правила'},questions:[{id:'legacy',type:'text-input',text:'Старый формат',answer:'Ответ'}],resultScreens:{win:{title:'Старая победа'}}};
+  await loadFile(doc,legacy,'legacy.aimquiz.json');
+  checks.legacyQuestionsRestored=doc.querySelector('#v8RoundTaskSource').value==='[ввод] Старый формат | Ответ'&&win.EditorV5.getConfig().tasks[0]?.question==='Старый формат';
+  checks.v1ProjectMigrated=doc.querySelector('#titleText').value==='Игра V1'&&win.EditorV5.getConfig().target.kind==='brain'&&win.EditorV5.getConfig().helper.kind==='graduate'&&win.EditorV5.getConfig().screens.victory.title==='Старая победа';
+
+  const failed=Object.entries(checks).filter(([,ok])=>!ok);
+  result.textContent=(failed.length?'FAIL ':'PASS ')+JSON.stringify(checks);
+  document.body.dataset.status=failed.length?'fail':'pass';
+  win.stop?.();
+};
+</script>
+</body>
+</html>

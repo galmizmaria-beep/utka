@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>History and reset smoke</title></head>
+<body>
+<iframe id="editor" src="../index.html?history-reset=1" style="width:1200px;height:800px"></iframe>
+<pre id="result">RUNNING</pre>
+<script>
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+editor.onload=async()=>{
+  const doc=editor.contentDocument,win=editor.contentWindow,checks={};
+  await wait(400);
+  const title=doc.querySelector('#titleText'),initial=title.value;
+  title.value='Первое изменение';
+  title.dispatchEvent(new Event('input',{bubbles:true}));
+  await wait(320);
+  title.value='Второе изменение';
+  title.dispatchEvent(new Event('input',{bubbles:true}));
+  await wait(320);
+  checks.undoEnabled=!doc.querySelector('#undoAction').disabled;
+  doc.querySelector('#undoAction').click();
+  await wait(100);
+  checks.undoRestoresPrevious=doc.querySelector('#titleText').value==='Первое изменение';
+  doc.querySelector('#redoAction').click();
+  await wait(100);
+  checks.redoRestoresChange=doc.querySelector('#titleText').value==='Второе изменение';
+
+  const config=win.EditorV5.getConfig();
+  config.scene.background='data:image/png;base64,custom';
+  config.helper.custom='https://example.com/helper.gif';
+  config.target.custom='https://example.com/target.gif';
+  config.taskTheme.backgroundImage='data:image/png;base64,task';
+  config.rounds.push({...config.rounds[0],id:'extra',title:'Лишний раунд'});
+  win.EditorV5.resetProject();
+  await wait(150);
+  const reset=win.EditorV5.getConfig();
+  checks.resetClearsAssets=!reset.scene.background&&!reset.helper.custom&&!reset.target.custom&&!reset.taskTheme.backgroundImage;
+  checks.resetRestoresDefaults=reset.titleScreen.title===initial&&reset.rounds.length===1&&doc.querySelector('#titleText').value===initial&&doc.querySelector('#v8RoundTabs').children.length===1;
+  checks.resetRestoresTaskField=doc.querySelector('#v8RoundTaskSource').value===reset.taskSource;
+
+  reset.titleScreen.title='Автосохранённая версия';
+  win.EditorV5.applyConfig();
+  win.EditorV5.saveNow();
+  const restored=document.createElement('iframe');
+  restored.src='../index.html?restore-choice=1';
+  document.body.append(restored);
+  await new Promise(resolve=>restored.addEventListener('load',resolve,{once:true}));
+  await wait(160);
+  const restoredDoc=restored.contentDocument;
+  checks.restorePromptAppears=!restoredDoc.querySelector('#restoreModal').hidden;
+  restoredDoc.querySelector('#restoreContinue').click();
+  await wait(400);
+  checks.continueRestoresAutosave=restoredDoc.querySelector('#titleText').value==='Автосохранённая версия';
+
+  restored.contentWindow.EditorV5.saveNow();
+  const deleted=document.createElement('iframe');
+  deleted.src='../index.html?restore-delete=1';
+  document.body.append(deleted);
+  await new Promise(resolve=>deleted.addEventListener('load',resolve,{once:true}));
+  await wait(160);
+  const deletedDoc=deleted.contentDocument;
+  deletedDoc.querySelector('#restoreDelete').click();
+  await wait(300);
+  checks.deleteStartsFresh=deletedDoc.querySelector('#restoreModal').hidden&&deletedDoc.querySelector('#titleText').value===initial&&deleted.contentWindow.EditorV5.getConfig().rounds.length===1;
+
+  const failed=Object.entries(checks).filter(([,ok])=>!ok);
+  result.textContent=(failed.length?'FAIL ':'PASS ')+JSON.stringify(checks);
+  document.body.dataset.status=failed.length?'fail':'pass';
+  win.stop?.();restored.contentWindow.stop?.();deleted.contentWindow.stop?.();
+};
+</script>
+</body>
+</html>
