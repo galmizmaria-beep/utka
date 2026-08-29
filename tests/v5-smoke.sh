@@ -18,7 +18,7 @@ grep -q 'id="v6CheckBg"' index.html
 grep -q 'id="v6CrosshairSize"' index.html
 grep -q 'particle-lightning' v5.css
 grep -q 'config.crosshair' enhancements.js
-grep -q 'let state=fresh()' app.js
+grep -q 'state=editorPlayerMode?fresh():migrate(load())' app.js
 grep -q 'id="simultaneousTargets"' index.html
 grep -q 'id="lightenProject"' index.html
 grep -q 'lightenObject' enhancements.js

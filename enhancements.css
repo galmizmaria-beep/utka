@@ -57,7 +57,6 @@
 .target-motion-slide .target-body{animation:targetSlide .85s ease-in-out infinite alternate}
 .target-motion-rocket .target-body{animation:targetRocketShake .1s linear infinite alternate}
 .target-motion-rocket .target-motion-trail{position:absolute;z-index:0;right:65%;top:43%;width:45%;height:17%;border-radius:100% 0 0 100%;background:linear-gradient(90deg,transparent,#ffed6b,#ff5a36);filter:drop-shadow(0 0 7px #ff6b35);animation:targetTrail .16s linear infinite alternate}
-.target-motion-magic .target-motion-trail,.target-motion-float .target-motion-trail{position:absolute;inset:12%;border:2px dotted color-mix(in srgb,var(--wing-color) 70%,white);border-radius:50%;animation:targetAura 2s linear infinite;opacity:.7}
 .target-facing-left .target-character{transform:scaleX(-1)}
 .flying-target.target-shot .target-wing,.flying-target.target-shot .target-body,.flying-target.target-shot .target-motion-trail{animation-play-state:paused!important}
 .flying-target.target-shot .target-body{filter:grayscale(.35) drop-shadow(0 3px 2px #0005);transform:translate(-50%,-50%) rotate(-18deg)}

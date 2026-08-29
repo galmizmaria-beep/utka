@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 cd "$(dirname "$0")/.."
-for file in index.html game.html app.js v8.js v8.css tests/v8-browser-smoke.html tests/latex-browser-smoke.html; do
+for file in index.html game.html app.js v8.js v8.css tests/v8-browser-smoke.html tests/latex-browser-smoke.html tests/export-browser-smoke.html; do
   test -s "$file" || { echo "Missing $file"; exit 1; }
 done
 grep -q 'Меткий ответ V8' index.html
@@ -89,6 +89,23 @@ grep -q 'asset-card\[data-target\].*target-character' enhancements.css
 grep -q "!HELPER_ANIMATED\[n.helper.kind\].*n.helper.kind='fox'" app.js
 if grep -q "\['capy','Капибара'\]\|\['wizard','Волшебник'\]\|\['scientist','Учёный'\]" app.js; then
   echo 'Static helper emoji found'
+  exit 1
+fi
+grep -q 'function saveNow' app.js
+grep -q 'reloadProject' v8.js
+grep -q 'showDifficultyScreen' v8.js
+grep -q 'helperEnterAnimation' index.html
+grep -q 'helperExitAnimation' index.html
+grep -q 'previewHelperEffect' enhancements.js
+grep -q 'taskShade' enhancements.js
+grep -q "task.type==='input'" app.js
+grep -q 'textAnswerInput' tests/export-browser-smoke.html
+if grep -q 'id="backgroundFit"' index.html; then
+  echo 'Removed game background fit control is still present'
+  exit 1
+fi
+if grep -q 'target-motion-magic .*target-motion-trail\|target-motion-float .*target-motion-trail' enhancements.css; then
+  echo 'Dotted target aura is still present'
   exit 1
 fi
 osascript -l JavaScript -e 'ObjC.import("Foundation"); var s=$.NSString.stringWithContentsOfFileEncodingError("v8.js",4,null).js; new Function(s)' >/dev/null
