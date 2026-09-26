@@ -53,7 +53,7 @@ editor.onload=async()=>{
 
   const medium=await launch(html,'medium');
   const mediumTargets=[...medium.doc.querySelectorAll('.live-target')];
-  checks.mediumKeepsEditorTargetCount=mediumTargets.length===3;
+  checks.mediumUsesLevelTargetCount=mediumTargets.length===1;
   checks.mediumKeepsTrajectory=mediumTargets.every(target=>target.dataset.trajectory==='bottom-up');
   checks.mediumKeepsRoundTotal=medium.doc.querySelector('#taskProgressValue').textContent==='0 / 4';
   const mediumFrames=mediumTargets[0]?.getAnimations()[0]?.effect?.getKeyframes?.()||[];
@@ -61,7 +61,7 @@ editor.onload=async()=>{
 
   const hard=await launch(html,'hard');
   const hardTargets=[...hard.doc.querySelectorAll('.live-target')];
-  checks.hardKeepsEditorTargetCount=hardTargets.length===3;
+  checks.hardUsesLevelTargetCount=hardTargets.length===6;
   checks.hardKeepsTrajectory=hardTargets.every(target=>target.dataset.trajectory==='bottom-up');
   checks.hardKeepsRoundTotal=hard.doc.querySelector('#taskProgressValue').textContent==='0 / 4';
   hardTargets[0].click();
@@ -69,10 +69,10 @@ editor.onload=async()=>{
   hard.doc.querySelector('#checkAnswer').click();
   hard.doc.querySelector('#continueGame').click();
   await wait(300);
-  checks.progressAndNextWaveMatch=hard.doc.querySelector('#taskProgressValue').textContent==='1 / 4'&&hard.doc.querySelectorAll('.live-target').length===3;
+  checks.progressAndNextWaveMatch=hard.doc.querySelector('#taskProgressValue').textContent==='1 / 4'&&hard.doc.querySelectorAll('.live-target').length===6;
 
   const snapshot=win.EditorV5.projectSnapshot();
-  checks.levelOnlyChangesFrequency=snapshot.rules.simultaneousTargets===3&&snapshot.target.size===91&&snapshot.target.duration===2;
+  checks.levelKeepsSizeAndDuration=snapshot.rules.simultaneousTargets===3&&snapshot.target.size===91&&snapshot.target.duration===2;
   const payload=await encodeProject(snapshot),genially=document.createElement('iframe');
   genially.src='../game.html#project-gzip='+payload;
   document.body.append(genially);
@@ -85,7 +85,7 @@ editor.onload=async()=>{
   genialDoc.querySelector('#skipHelper').click();
   await wait(1000);
   const genialTargets=[...genialDoc.querySelectorAll('.live-target')];
-  checks.geniallyUsesSameCount=genialTargets.length===3;
+  checks.geniallyUsesSameCount=genialTargets.length===6;
   checks.geniallyUsesSameTrajectory=genialTargets.every(target=>target.dataset.trajectory==='bottom-up');
   checks.geniallyUsesSameRoundTotal=genialDoc.querySelector('#taskProgressValue').textContent==='0 / 4';
   const failed=Object.entries(checks).filter(([,ok])=>!ok);
