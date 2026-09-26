@@ -1,0 +1,1256 @@
+[
+  {
+    "tag": "select",
+    "id": "localeTop",
+    "codeReferences": 6
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary history-button",
+    "id": "undoAction",
+    "type": "button",
+    "title": "Отменить действие",
+    "disabled": null,
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary history-button",
+    "id": "redoAction",
+    "type": "button",
+    "title": "Вернуть действие",
+    "disabled": null,
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary",
+    "id": "loadProject",
+    "codeReferences": 10
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary",
+    "id": "saveProject",
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "class": "btn primary",
+    "id": "exportHtml",
+    "codeReferences": 3
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary",
+    "id": "lightenProject",
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "class": "btn hot",
+    "id": "copyGenially",
+    "codeReferences": 12
+  },
+  {
+    "tag": "input",
+    "id": "projectFile",
+    "type": "file",
+    "accept": ".json,.aimquiz.json,application/json",
+    "hidden": null,
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "class": "editor-tab active",
+    "data-page": "design",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "class": "editor-tab",
+    "data-page": "game",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "class": "editor-tab",
+    "data-page": "tasks",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "class": "editor-tab",
+    "data-page": "screens",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "class": "editor-tab",
+    "data-page": "audio",
+    "codeReferences": 0
+  },
+  {
+    "tag": "select",
+    "id": "locale",
+    "codeReferences": 22
+  },
+  {
+    "tag": "select",
+    "id": "gameFont",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "titleEnabled",
+    "type": "checkbox",
+    "codeReferences": 3
+  },
+  {
+    "tag": "input",
+    "id": "titleText",
+    "maxlength": "100",
+    "codeReferences": 2
+  },
+  {
+    "tag": "textarea",
+    "id": "titleSubtitle",
+    "rows": "2",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "titleSize",
+    "type": "range",
+    "min": "24",
+    "max": "72",
+    "codeReferences": 16
+  },
+  {
+    "tag": "input",
+    "id": "titleColor",
+    "type": "color",
+    "codeReferences": 4
+  },
+  {
+    "tag": "input",
+    "id": "playText",
+    "maxlength": "40",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "playBg",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "playColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "titleFrame",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "titleGlow",
+    "type": "color",
+    "codeReferences": 3
+  },
+  {
+    "tag": "input",
+    "id": "titleGlowSize",
+    "type": "range",
+    "min": "0",
+    "max": "60",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "titleBackgroundUpload",
+    "type": "file",
+    "accept": "image/png,image/jpeg,image/webp",
+    "hidden": null,
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "class": "mini danger",
+    "data-delete": "title-bg",
+    "codeReferences": 0
+  },
+  {
+    "tag": "input",
+    "id": "titleCardUpload",
+    "type": "file",
+    "accept": "image/png,image/jpeg,image/webp",
+    "hidden": null,
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "class": "mini danger",
+    "data-delete": "title-card-bg",
+    "codeReferences": 0
+  },
+  {
+    "tag": "input",
+    "id": "titleCardColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "select",
+    "id": "titleCardFit",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "titleCardOverlay",
+    "type": "range",
+    "min": "0",
+    "max": "80",
+    "codeReferences": 2
+  },
+  {
+    "tag": "select",
+    "id": "v5TitleShape",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5TitleBorderWidth",
+    "type": "range",
+    "min": "0",
+    "max": "14",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5TitleRadius",
+    "type": "range",
+    "min": "0",
+    "max": "80",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5TitleGlowEnabled",
+    "type": "checkbox",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "backgroundUpload",
+    "type": "file",
+    "accept": "image/png,image/jpeg,image/webp",
+    "hidden": null,
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "class": "mini danger",
+    "data-delete": "game-bg",
+    "codeReferences": 0
+  },
+  {
+    "tag": "input",
+    "id": "backgroundColor",
+    "type": "color",
+    "codeReferences": 22
+  },
+  {
+    "tag": "input",
+    "id": "backgroundDim",
+    "type": "range",
+    "min": "0",
+    "max": "70",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "class": "library-search",
+    "id": "targetSearch",
+    "placeholder": "Поиск цели...",
+    "codeReferences": 2
+  },
+  {
+    "tag": "select",
+    "id": "targetCategory",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "targetUpload",
+    "type": "file",
+    "accept": "image/png,image/jpeg,image/webp,image/gif",
+    "hidden": null,
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "targetMediaUrl",
+    "type": "url",
+    "placeholder": "https://.../target.webp",
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "id": "targetMediaClear",
+    "class": "mini danger",
+    "type": "button",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "targetSize",
+    "type": "range",
+    "min": "40",
+    "max": "180",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "targetVoiceEnabled",
+    "type": "checkbox",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "targetVoiceVolume",
+    "type": "range",
+    "min": "0",
+    "max": "100",
+    "codeReferences": 3
+  },
+  {
+    "tag": "input",
+    "class": "library-search",
+    "id": "helperSearch",
+    "placeholder": "Поиск помощника...",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "helperUpload",
+    "type": "file",
+    "accept": "image/png,image/jpeg,image/webp,image/gif",
+    "hidden": null,
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "helperMediaUrl",
+    "type": "url",
+    "placeholder": "https://.../helper.gif",
+    "codeReferences": 6
+  },
+  {
+    "tag": "button",
+    "id": "helperMediaClear",
+    "class": "mini danger",
+    "type": "button",
+    "codeReferences": 1
+  },
+  {
+    "tag": "textarea",
+    "id": "helperRules",
+    "rows": "4",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "helperDuration",
+    "type": "range",
+    "min": "1",
+    "max": "30",
+    "codeReferences": 3
+  },
+  {
+    "tag": "select",
+    "id": "helperEnterAnimation",
+    "codeReferences": 2
+  },
+  {
+    "tag": "select",
+    "id": "helperExitAnimation",
+    "codeReferences": 2
+  },
+  {
+    "tag": "select",
+    "id": "v5HelperShape",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperBg",
+    "type": "color",
+    "codeReferences": 6
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperTextColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperBorder",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperBorderWidth",
+    "type": "range",
+    "min": "0",
+    "max": "12",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperTextSize",
+    "type": "range",
+    "min": "12",
+    "max": "42",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6HelperWidth",
+    "type": "range",
+    "min": "25",
+    "max": "85",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6HelperPadding",
+    "type": "range",
+    "min": "6",
+    "max": "40",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperRadius",
+    "type": "range",
+    "min": "0",
+    "max": "80",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperGlow",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperGlowSize",
+    "type": "range",
+    "min": "0",
+    "max": "60",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperBgUpload",
+    "type": "file",
+    "accept": "image/png,image/jpeg,image/webp",
+    "hidden": null,
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "id": "v5HelperBgDelete",
+    "class": "mini danger",
+    "codeReferences": 1
+  },
+  {
+    "tag": "select",
+    "id": "v5HelperBgFit",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5HelperOverlay",
+    "type": "range",
+    "min": "0",
+    "max": "80",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5SkipBg",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5SkipText",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5SkipBorder",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5SkipBorderWidth",
+    "type": "range",
+    "min": "0",
+    "max": "10",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5SkipRadius",
+    "type": "range",
+    "min": "0",
+    "max": "40",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5SkipGlow",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "select",
+    "id": "trajectory",
+    "codeReferences": 32
+  },
+  {
+    "tag": "input",
+    "id": "spawnInterval",
+    "type": "number",
+    "min": ".5",
+    "max": "10",
+    "step": ".1",
+    "codeReferences": 12
+  },
+  {
+    "tag": "input",
+    "id": "targetDuration",
+    "type": "number",
+    "min": "1",
+    "max": "15",
+    "step": ".5",
+    "codeReferences": 1
+  },
+  {
+    "tag": "select",
+    "id": "hitEffect",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "effectSize",
+    "type": "range",
+    "min": "30",
+    "max": "220",
+    "codeReferences": 7
+  },
+  {
+    "tag": "input",
+    "id": "particleCount",
+    "type": "range",
+    "min": "4",
+    "max": "40",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "effectColor",
+    "type": "color",
+    "codeReferences": 8
+  },
+  {
+    "tag": "input",
+    "id": "effectColor2",
+    "type": "color",
+    "codeReferences": 4
+  },
+  {
+    "tag": "button",
+    "data-crosshair": "classic",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-crosshair": "dot",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-crosshair": "star",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-crosshair": "lens",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-crosshair": "corners",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-crosshair": "minimal",
+    "codeReferences": 0
+  },
+  {
+    "tag": "input",
+    "id": "v6CrosshairSize",
+    "type": "range",
+    "min": "24",
+    "max": "160",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6CrosshairWidth",
+    "type": "range",
+    "min": "1",
+    "max": "12",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6CrosshairColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6CrosshairGlow",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "livesEnabled",
+    "type": "checkbox",
+    "codeReferences": 12
+  },
+  {
+    "tag": "input",
+    "id": "livesCount",
+    "type": "number",
+    "min": "1",
+    "max": "99",
+    "codeReferences": 10
+  },
+  {
+    "tag": "select",
+    "id": "livesIcon",
+    "codeReferences": 8
+  },
+  {
+    "tag": "input",
+    "id": "livesSize",
+    "type": "range",
+    "min": "12",
+    "max": "44",
+    "codeReferences": 7
+  },
+  {
+    "tag": "input",
+    "id": "lifeWrong",
+    "type": "checkbox",
+    "codeReferences": 5
+  },
+  {
+    "tag": "select",
+    "id": "timerMode",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "timerSeconds",
+    "type": "number",
+    "min": "5",
+    "max": "3600",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "timerWarning",
+    "type": "number",
+    "min": "1",
+    "max": "60",
+    "codeReferences": 2
+  },
+  {
+    "tag": "select",
+    "id": "timerStyle",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "timerBg",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "timerColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "timerWarningColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "timerSize",
+    "type": "range",
+    "min": "12",
+    "max": "42",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5HudBg",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudOpacity",
+    "type": "range",
+    "min": "10",
+    "max": "100",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudBorder",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5HudBorderWidth",
+    "type": "range",
+    "min": "0",
+    "max": "8",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudRadius",
+    "type": "range",
+    "min": "0",
+    "max": "40",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudText",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudFontSize",
+    "type": "range",
+    "min": "10",
+    "max": "28",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudGap",
+    "type": "range",
+    "min": "2",
+    "max": "24",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudPaddingX",
+    "type": "range",
+    "min": "4",
+    "max": "30",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudPaddingY",
+    "type": "range",
+    "min": "2",
+    "max": "24",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5HudGlow",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5HudGlowSize",
+    "type": "range",
+    "min": "0",
+    "max": "40",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "roundIntroText",
+    "codeReferences": 3
+  },
+  {
+    "tag": "select",
+    "id": "roundIntroAnimation",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "roundIntroDuration",
+    "type": "number",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "roundIntroBg",
+    "type": "color",
+    "codeReferences": 3
+  },
+  {
+    "tag": "input",
+    "id": "roundIntroFrame",
+    "type": "color",
+    "codeReferences": 3
+  },
+  {
+    "tag": "input",
+    "id": "rounds",
+    "type": "number",
+    "min": "1",
+    "max": "10",
+    "codeReferences": 84
+  },
+  {
+    "tag": "input",
+    "id": "targetsPerRound",
+    "type": "number",
+    "min": "1",
+    "max": "30",
+    "codeReferences": 11
+  },
+  {
+    "tag": "input",
+    "id": "simultaneousTargets",
+    "type": "number",
+    "min": "1",
+    "max": "6",
+    "codeReferences": 9
+  },
+  {
+    "tag": "input",
+    "id": "hitPoints",
+    "type": "number",
+    "min": "0",
+    "codeReferences": 6
+  },
+  {
+    "tag": "input",
+    "id": "answerPoints",
+    "type": "number",
+    "min": "0",
+    "codeReferences": 6
+  },
+  {
+    "tag": "input",
+    "id": "roundHudBg",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "roundHudFrame",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "scoreHudBg",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "scoreHudFrame",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskBg",
+    "type": "color",
+    "codeReferences": 3
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskOpacity",
+    "type": "range",
+    "min": "20",
+    "max": "100",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskBorder",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskBorderWidth",
+    "type": "range",
+    "min": "0",
+    "max": "14",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskRadius",
+    "type": "range",
+    "min": "0",
+    "max": "60",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskGlow",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskGlowSize",
+    "type": "range",
+    "min": "0",
+    "max": "60",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskSpacing",
+    "type": "range",
+    "min": "2",
+    "max": "30",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5TaskBgUpload",
+    "type": "file",
+    "accept": "image/png,image/jpeg,image/webp",
+    "hidden": null,
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "id": "v5TaskBgDelete",
+    "class": "mini danger",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5QuestionSize",
+    "type": "range",
+    "min": "18",
+    "max": "64",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v5QuestionColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5AnswerSize",
+    "type": "range",
+    "min": "14",
+    "max": "48",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5AnswerColor",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5AnswerBg",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5AnswerBorder",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5AnswerSelected",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5AnswerCorrect",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v5AnswerWrong",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v6CheckBg",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6CheckText",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6CheckBorder",
+    "type": "color",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "v6CheckGlow",
+    "type": "color",
+    "codeReferences": 2
+  },
+  {
+    "tag": "input",
+    "id": "v6CheckGlowSize",
+    "type": "range",
+    "min": "0",
+    "max": "40",
+    "codeReferences": 1
+  },
+  {
+    "tag": "textarea",
+    "id": "taskSource",
+    "class": "source-editor",
+    "rows": "14",
+    "spellcheck": "false",
+    "codeReferences": 63
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary",
+    "id": "showTaskHelp",
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary",
+    "id": "copyTaskTemplate",
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "class": "mini active",
+    "data-screen": "victory",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "class": "mini",
+    "data-screen": "defeat",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "class": "mini",
+    "data-screen": "timeout",
+    "codeReferences": 0
+  },
+  {
+    "tag": "input",
+    "id": "soundEnabled",
+    "type": "checkbox",
+    "codeReferences": 1
+  },
+  {
+    "tag": "input",
+    "id": "volume",
+    "type": "range",
+    "min": "0",
+    "max": "100",
+    "codeReferences": 26
+  },
+  {
+    "tag": "input",
+    "id": "v5PublicGameUrl",
+    "type": "url",
+    "placeholder": "https://example.com/game.html",
+    "codeReferences": 9
+  },
+  {
+    "tag": "button",
+    "id": "v5CopyPublicEmbed",
+    "class": "btn secondary full",
+    "codeReferences": 6
+  },
+  {
+    "tag": "button",
+    "class": "btn danger full",
+    "data-delete": "project",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary",
+    "id": "restartGame",
+    "codeReferences": 4
+  },
+  {
+    "tag": "button",
+    "class": "btn primary",
+    "id": "toggleTest",
+    "codeReferences": 8
+  },
+  {
+    "tag": "button",
+    "class": "active",
+    "data-preview": "game",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "id": "showTitle",
+    "data-preview": "title",
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "data-preview": "helper",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-preview": "task",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-preview": "victory",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-preview": "defeat",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "data-preview": "timeout",
+    "codeReferences": 0
+  },
+  {
+    "tag": "button",
+    "id": "showGame",
+    "hidden": null,
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "id": "skipHelper",
+    "class": "skip-button",
+    "codeReferences": 4
+  },
+  {
+    "tag": "button",
+    "id": "flyingTarget",
+    "class": "flying-target",
+    "codeReferences": 12
+  },
+  {
+    "tag": "button",
+    "id": "startGame",
+    "class": "play-button",
+    "codeReferences": 10
+  },
+  {
+    "tag": "button",
+    "id": "checkAnswer",
+    "class": "play-button",
+    "codeReferences": 18
+  },
+  {
+    "tag": "button",
+    "id": "continueGame",
+    "class": "play-button",
+    "hidden": null,
+    "codeReferences": 16
+  },
+  {
+    "tag": "button",
+    "id": "resultButton",
+    "class": "play-button",
+    "codeReferences": 5
+  },
+  {
+    "tag": "button",
+    "class": "btn secondary",
+    "id": "confirmKeep",
+    "codeReferences": 2
+  },
+  {
+    "tag": "button",
+    "class": "btn danger",
+    "id": "confirmDelete",
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "class": "btn danger",
+    "id": "restoreDelete",
+    "type": "button",
+    "codeReferences": 1
+  },
+  {
+    "tag": "button",
+    "class": "btn primary",
+    "id": "restoreContinue",
+    "type": "button",
+    "codeReferences": 1
+  }
+]
