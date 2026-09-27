@@ -1,0 +1,37 @@
+<!doctype html><meta charset="utf-8"><title>Editor audit regression</title>
+<iframe id="editor" src="../index.html" style="width:1440px;height:1000px"></iframe><pre id="result">RUNNING</pre>
+<script>
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+editor.onload=async()=>{try{
+await wait(400);const w=editor.contentWindow,d=editor.contentDocument,$=s=>d.querySelector(s),api=w.EditorV5,c=api.getConfig(),checks={};if(!$('#restoreModal').hidden)$('#restoreDelete').click();
+const errors=[];w.addEventListener('error',e=>errors.push(e.message));w.addEventListener('unhandledrejection',e=>errors.push(String(e.reason)));
+const input=(e,value,event='input')=>{e.value=value;e.dispatchEvent(new w.Event(event,{bubbles:true}))};
+const baseline=structuredClone(api.projectSnapshot());
+checks.tabs=[...d.querySelectorAll('.editor-tab')].every(b=>{b.click();return $('#page-'+b.dataset.page).classList.contains('active')});
+// Exercise all live range fields at both ends and restore each value.
+const sliders=[...d.querySelectorAll('input[type=range]')],failed=[];
+for(const el of sliders){const old=el.value;for(const val of [el.min,el.max]){input(el,val);await wait(5);if(+el.value!==+val)failed.push(el.id||JSON.stringify(el.dataset));}input(el,old);await wait(5)}
+checks.sliderBoundaries=failed.length===0;checks.sliderCount=sliders.length>50;
+// Round actions must update both the visible task list and active game config.
+$('#v8AddRound').click();input($('#v8RoundTaskSource'),'[устно] Второй раунд');input($('#v8RoundTitle'),'Второй');
+checks.addRound=c.rounds.length===2&&c.tasks[0].question==='Второй раунд';$('#v8DuplicateRound').click();checks.duplicateRound=c.rounds.length===3&&c.tasks[0].question==='Второй раунд';
+$('#v8RoundUp').click();checks.moveRoundUp=w.EditorV8.getActiveRound()===c.rounds[1];$('#v8RoundDown').click();checks.moveRoundDown=w.EditorV8.getActiveRound()===c.rounds[2];
+$('#v8DeleteRound').click();$('#confirmKeep').click();checks.cancelDelete=c.rounds.length===3;$('#v8DeleteRound').click();$('#confirmDelete').click();checks.confirmDelete=c.rounds.length===2;
+// A later image deletion must use its own action, not the earlier round deletion.
+const canvas=d.createElement('canvas');canvas.width=32;canvas.height=32;canvas.getContext('2d').fillRect(0,0,32,32);const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));const file=new w.File([blob],'audit.png',{type:'image/png'});
+async function upload(selector){const el=$(selector);if(!el)throw Error('Missing upload: '+selector);const dt=new w.DataTransfer();dt.items.add(file);el.files=dt.files;el.dispatchEvent(new w.Event('change',{bubbles:true}));await wait(150)}
+$('[data-screen="victory"]').click();await wait(10);await upload('#screenImageUpload');checks.imageUpload=!!c.screens.victory.image;checks.screenExtrasAfterUpload=!!$('#v5ScreenTitleSize')&&!!$('#v5ScreenAnimation');
+$('[data-delete="screen-image"]').click();$('#confirmDelete').click();checks.imageDelete=!c.screens.victory.image&&c.rounds.length===2;await wait(10);checks.screenExtrasAfterDelete=!!$('#v5ScreenTitleSize');
+await upload('[data-no-title-image="backgroundImage"]');checks.noTitleImage=!!c.difficultyScreen.backgroundImage;$('[data-no-title-delete="backgroundImage"]').click();checks.noTitleImageDelete=!c.difficultyScreen.backgroundImage;
+await upload('#v5TaskBgUpload');checks.taskImage=!!c.taskTheme.backgroundImage;$('#v5TaskBgDelete').click();checks.taskImageDelete=!c.taskTheme.backgroundImage;
+await upload('#helperUpload');checks.helperImage=!!c.helper.custom;$('#helperMediaClear').click();checks.helperImageDelete=!c.helper.custom;await upload('#targetUpload');checks.targetImage=!!c.target.custom;$('#targetMediaClear').click();checks.targetImageDelete=!c.target.custom;
+// Each target profile must keep the chosen preview trajectory and duration.
+c.target.kind='frog';c.target.duration=9;c.target.trajectory='bottom-up';api.applyConfig();w.EditorPreviewV8.display('target');const anim=$('#flyingTarget').getAnimations()[0];checks.previewTrajectory=anim.effect.getKeyframes().at(-1).top==='-10%';checks.previewDuration=anim.effect.getTiming().duration===9000;
+input($('#timerSeconds'),-10);checks.numberMinimum=c.timer.seconds===5;input($('#timerSeconds'),9000);checks.numberMaximum=c.timer.seconds===3600;
+// Opening an edit screen while testing must stop the active game.
+$('#toggleTest').click();$('[data-preview="title"]').click();checks.editStopsTest=!$('#gameStage').classList.contains('testing');
+await api.importProject(new w.File([JSON.stringify(baseline)],'audit.aimquiz.json',{type:'application/json'}));await wait(100);
+checks.noErrors=errors.length===0;
+result.textContent=(Object.values(checks).every(Boolean)?'PASS ':'FAIL ')+JSON.stringify({checks,sliders:sliders.length,failed,errors});
+}catch(e){result.textContent='FAIL '+e.stack}};
+</script>

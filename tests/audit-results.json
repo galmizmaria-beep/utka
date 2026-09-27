@@ -1,0 +1,75 @@
+{
+  "browser": "Chromium 154",
+  "date": "2026-09-27",
+  "suites": [
+    {
+      "suite": "latex",
+      "result": "PASS {\"allPdfCommandsConverted\":true,\"nestedFraction\":true,\"nthRoot\":true,\"absoluteValue\":true,\"symbols\":true,\"overlineAndUnits\":true,\"cases\":true,\"absoluteValueDoesNotSplitAnswers\":true,\"standaloneUsesSameRenderer\":true,\"standaloneTargetFalls\":true,\"standaloneTaskOpens\":true,\"standaloneActuallyRendersFormula\":true,\"htmlEscaped\":true}",
+      "errors": []
+    },
+    {
+      "suite": "export",
+      "result": "PASS {\"loadedQuestionsVisible\":true,\"autoSavePromptVisible\":true,\"autoSaveRestoresQuestions\":true,\"exportStartsClean\":true,\"exportLaunchesTarget\":true,\"inputIsEmptyField\":true,\"inputAnswerChecked\":true,\"helperStaticWhileEditing\":true,\"helperAnimationPreview\":true,\"taskBackgroundVisible\":true,\"levelsWithoutTitle\":true,\"levelScreenCloses\":true,\"levelChoiceStartsGame\":true}",
+      "errors": []
+    },
+    {
+      "suite": "history-reset",
+      "result": "PASS {\"undoEnabled\":true,\"undoRestoresPrevious\":true,\"redoRestoresChange\":true,\"resetClearsAssets\":true,\"resetRestoresDefaults\":true,\"resetRestoresTaskField\":true,\"restorePromptAppears\":true,\"continueRestoresAutosave\":true,\"deleteStartsFresh\":true}",
+      "errors": []
+    },
+    {
+      "suite": "project-load",
+      "result": "PASS {\"loadButtonOpensPicker\":true,\"fileInputCleared\":true,\"loadButtonRestored\":true,\"allRoundsLoaded\":true,\"firstRoundQuestionsVisible\":true,\"firstRoundParsed\":true,\"secondRoundParsed\":true,\"activeQuestionsMatchField\":true,\"mainSettingsLoaded\":true,\"extendedSettingsLoaded\":true,\"previewLoaded\":true,\"resultScreenEditorLoaded\":true,\"secondRoundQuestionsVisible\":true,\"snapshotKeepsEveryRound\":true,\"sameFileCanBeLoadedAgain\":true,\"legacyQuestionsRestored\":true,\"v1ProjectMigrated\":true}",
+      "errors": []
+    },
+    {
+      "suite": "target-library",
+      "result": "PASS {\"categoryOptions\":true,\"categoryCounts\":true,\"everyNewTargetAnimated\":true,\"onlyFiveRealVoices\":true,\"silentTargetDisablesControls\":true,\"duckKeepsRealVoice\":true}",
+      "errors": []
+    },
+    {
+      "suite": "runtime-parity",
+      "result": "PASS {\"mediumUsesLevelTargetCount\":true,\"mediumKeepsTrajectory\":true,\"mediumKeepsRoundTotal\":true,\"exportUsesFullTrajectory\":true,\"hardUsesLevelTargetCount\":true,\"hardKeepsTrajectory\":true,\"hardKeepsRoundTotal\":true,\"progressAndNextWaveMatch\":true,\"levelKeepsSizeAndDuration\":true,\"geniallyUsesSameCount\":true,\"geniallyUsesSameTrajectory\":true,\"geniallyUsesSameRoundTotal\":true}",
+      "errors": []
+    },
+    {
+      "suite": "requested-fixes",
+      "result": "PASS {\"noTitleNavigation\":true,\"noTitleBorder\":true,\"noTitleShape\":true,\"largeHelper\":true,\"bubbleTopLeft\":true,\"bubbleBottomRight\":true,\"roundBlocksTargets\":true,\"levelCount\":true,\"targetsAfterRound\":true,\"otherTargetsScatter\":true,\"taskAfterEscape\":true,\"sharedAudio\":true,\"largeProjectSaved\":true,\"restorePrompt\":true,\"latestLargeProjectRestored\":true}",
+      "errors": []
+    },
+    {
+      "suite": "v8",
+      "result": "PASS {\"initialGameButtonNeutral\":true,\"helperSelected\":true,\"helperOutline\":true,\"resizeHandle\":true,\"editorRoundTabIndependent\":true,\"editorRoundTabHasNoInlineStyle\":true,\"roundBackground\":true,\"roundStylePreviewStatic\":true,\"roundAnimationLibraries\":true,\"roundEnterPreview\":true,\"roundExitPreview\":true,\"roundNoneAnimation\":true,\"selectionPersists\":true,\"retryAvailable\":true,\"continueBackground\":true,\"continueGlow\":true,\"soundPresets\":true,\"helperImageControlsRemoved\":true,\"hudColorControlsRemoved\":true,\"duplicateTaskSourceHidden\":true,\"targetPreviewButton\":true,\"crosshairPreviewButton\":true,\"fontLibrary\":true,\"textAnswerType\":true,\"textAnswerBackground\":true,\"textAnswerAccepted\":true,\"targetPreviewVisible\":true,\"targetTrajectoryPreview\":true,\"animatedTargetCharacter\":true,\"targetVoiceLibrary\":true,\"targetVoiceControls\":true,\"newAnimatedTargetCategories\":true,\"unvoicedTargetDisablesSound\":true,\"crosshairPreviewVisible\":true,\"crosshairPreviewUpdates\":true,\"gameButtonStartsFullTest\":true,\"progressStartsAtZero\":true,\"targetFallsBeforeTask\":true,\"completedTaskProgress\":true,\"completedLabel\":true}",
+      "errors": []
+    },
+    {
+      "suite": "audio-parity",
+      "result": "PASS {\"soft\":true,\"arcade\":true,\"magic\":true,\"laser\":true,\"bell\":true,\"pop\":true,\"retro\":true,\"chime\":true,\"drum\":true,\"digital\":true}",
+      "errors": []
+    },
+    {
+      "suite": "audit-ui",
+      "result": "PASS {\"checks\":{\"tabs\":true,\"sliderBoundaries\":true,\"sliderCount\":true,\"addRound\":true,\"duplicateRound\":true,\"moveRoundUp\":true,\"moveRoundDown\":true,\"cancelDelete\":true,\"confirmDelete\":true,\"imageUpload\":true,\"screenExtrasAfterUpload\":true,\"imageDelete\":true,\"screenExtrasAfterDelete\":true,\"noTitleImage\":true,\"noTitleImageDelete\":true,\"taskImage\":true,\"taskImageDelete\":true,\"helperImage\":true,\"helperImageDelete\":true,\"targetImage\":true,\"targetImageDelete\":true,\"previewTrajectory\":true,\"previewDuration\":true,\"numberMinimum\":true,\"numberMaximum\":true,\"editStopsTest\":true,\"noErrors\":true},\"sliders\":68,\"failed\":[],\"errors\":[]}",
+      "errors": []
+    },
+    {
+      "suite": "result-button",
+      "result": "PASS {\"editor_victory\":true,\"editor_defeat\":true,\"editor_timeout\":true,\"export_victory\":true,\"restart_victory\":true,\"export_defeat\":true,\"restart_defeat\":true,\"export_timeout\":true,\"restart_timeout\":true}",
+      "errors": []
+    },
+    {
+      "suite": "header-actions",
+      "result": "PASS {\"projectDownload\":true,\"htmlDownload\":true,\"geniallyCode\":true,\"codeKeepsSettings\":true,\"secondCopyButton\":true,\"audioUpload\":true,\"audioDeleteCancel\":true,\"audioDelete\":true,\"lightenFinishes\":true}",
+      "errors": []
+    },
+    {
+      "suite": "pinned-player",
+      "result": "PASS {\"legacy\":true,\"direct\":true,\"new\":true}",
+      "errors": []
+    }
+  ],
+  "unitAssertions": 20,
+  "slidersAtBothBounds": 68,
+  "changedControls": 216,
+  "userGameCompletedTasks": 20
+}
