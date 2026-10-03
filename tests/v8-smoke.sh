@@ -29,7 +29,7 @@ grep -q 'continueButton' v8.js
 grep -q 'bindHelperTransform' v8.js
 grep -q 'helper-selected' v8.css
 grep -q "checkAnswer.*hidden=ok" app.js
-grep -q "taskCard.*className='task-card'" enhancements.js
+grep -q "api.openTask(true)" enhancements.js
 grep -q "closest.*#gameStage" enhancements.js
 grep -q 'selectionPersists' tests/v8-browser-smoke.html
 grep -q 'SOUND_PRESETS' app.js
