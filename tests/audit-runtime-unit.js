@@ -10,7 +10,7 @@ function makeEnvironment(){
 }
 const editor=makeEnvironment();
 const start=source.lastIndexOf('renderSelectors();bind();updateSource();');
-const exposed=source.slice(0,start)+"window.test={get state(){return state},get game(){return game},checkAnswer,continueGame,resetGame,startTimer,renderTimer,renderMath,parseTasks,showResult,renderHitEffect,shuffle,layoutHelper,playConfiguredSound,SOUND_PRESETS};})();";
+const exposed=source.slice(0,start)+"window.test={get state(){return state},get game(){return game},openTask,checkAnswer,continueGame,resetGame,startTimer,renderTimer,renderMath,parseTasks,showResult,renderHitEffect,shuffle,layoutHelper,playConfiguredSound,SOUND_PRESETS};})();";
 vm.runInNewContext(exposed,editor);
 const e=editor.window.test,config=e.state,select=editor.select;
 config.audio.enabled=false;e.game.active=true;config.timer.mode='game';config.timer.seconds=10;e.startTimer('game');editor.advance(2000);checks.editorCountdown=select('#timerText').textContent==='00:08';config.rules.targetsPerRound=10;e.game.hits=0;e.continueGame();checks.gameTimerSurvivesContinue=editor.frames.size===1;editor.advance(8000);checks.editorZeroDisplayed=select('#timerText').textContent==='00:00';
@@ -28,4 +28,10 @@ standalone.C=c;standalone.D={ru:{}};standalone.M=e.renderMath;standalone.P={};st
 vm.runInNewContext(runtime+';standaloneRuntime(C,D,M,P,V)',standalone);
 const t=standalone.window.test,ss=standalone.select;t.armTimer('game');standalone.advance(2000);checks.exportCountdown=ss('#timerText').textContent==='00:08';checks.exportLivesHidden=ss('#livesHud').textContent==='';ss('#checkAnswer').hidden=false;ss('#textAnswerInput').value='no';t.check();checks.exportDisabledLivesNotLost=t.lives===c.rules.livesCount;ss('#textAnswerInput').value='yes';t.check();const before=t.score;t.check();checks.exportAnswerNotScoredTwice=t.score===before;t.next();checks.exportGameTimerSurvivesContinue=standalone.frames.size===1;
 const layer=editor.document.createElement('div');e.renderHitEffect({...config.target,effect:'hearts',particles:7,effectSize:90},layer,20,30,()=>{});checks.effectParticleCount=layer.children.length===7;checks.effectSizeApplied=layer.children.every(p=>p.style.cssText.includes('font-size:30px'));config.screens.victory.titleSize=61;config.screens.victory.animation='rise';e.showResult('victory',true);checks.resultTitleSize=select('#resultTitle').style.fontSize==='61px';checks.resultAnimation=select('.result-card').className==='result-card result-rise';
+for(const source of ['[порядок] Числа | |','[порядок] Числа | 1 |','']){
+ config.taskSource=source;config.tasks=e.parseTasks(source).tasks;select('#resultScreen').hidden=false;e.openTask(true);
+ checks['emptyPreviewNoVictory_'+source]=select('#resultScreen').hidden&&!select('#taskModal').hidden&&select('#checkAnswer').hidden&&select('#continueGame').hidden&&!!select('#answerArea').textContent;
+}
+config.taskSource='[порядок] Числа | 1 | 2';config.tasks=e.parseTasks(config.taskSource).tasks;e.openTask(true);
+checks.validPreviewAfterEmpty=!select('#taskModal').hidden&&select('#resultScreen').hidden&&!select('#checkAnswer').hidden&&select('#continueGame').hidden&&select('#modalQuestion').innerHTML==='Числа';
 const failed=Object.entries(checks).filter(([k,v])=>!v);console.log(JSON.stringify(checks));if(failed.length)throw Error('Failed: '+failed.map(x=>x[0]).join(', '));console.log('PASS '+Object.keys(checks).length+' runtime assertions');
