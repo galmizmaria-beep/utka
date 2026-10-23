@@ -5,6 +5,7 @@
 <iframe id="editor" src="../index.html?runtime-parity=1" style="width:1200px;height:800px"></iframe>
 <pre id="result">RUNNING</pre>
 <script>
+if(new URLSearchParams(location.search).has('snapshot'))editor.src='../player-v20261023-oral-lang1/index.html';
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const launch=async(html,level)=>{
   const frame=document.createElement('iframe');
@@ -74,7 +75,7 @@ editor.onload=async()=>{
   const snapshot=win.EditorV5.projectSnapshot();
   checks.levelKeepsSizeAndDuration=snapshot.rules.simultaneousTargets===3&&snapshot.target.size===91&&snapshot.target.duration===2;
   const payload=await encodeProject(snapshot),genially=document.createElement('iframe');
-  genially.src='../game-v20260927-forest1.html#project-gzip='+payload;
+  genially.src='../game-v20261023-oral-lang1.html#project-gzip='+payload;
   document.body.append(genially);
   await new Promise(resolve=>{const done=()=>{if(genially.contentWindow.location.pathname.endsWith('/index.html'))resolve();else genially.addEventListener('load',done,{once:true})};genially.addEventListener('load',done,{once:true})});
   await wait(350);

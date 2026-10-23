@@ -2,6 +2,7 @@
 <iframe id="editor" src="../index.html?export-smoke=1" style="width:1200px;height:800px"></iframe>
 <pre id="result">RUNNING</pre>
 <script>
+if(new URLSearchParams(location.search).has('snapshot'))editor.src='../player-v20261023-oral-lang1/index.html';
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 editor.onload=async()=>{
  const d=editor.contentDocument,w=editor.contentWindow,checks={};await wait(350);
